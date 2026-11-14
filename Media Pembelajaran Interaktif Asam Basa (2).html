@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Pembelajaran Interaktif - Asam dan Basa</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tone.js untuk Efek Suara Interaktif -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <!-- Google Fonts: Fredoka & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+        }
+        .font-display {
+            font-family: 'Fredoka', sans-serif;
+        }
+        
+        /* Latar Belakang Bertema Lab Kimia seperti contoh */
+        .lab-bg {
+            background: linear-gradient(180deg, #E8F8FA 0%, #B2EBF2 45%, #26A69A 45%, #00796B 85%, #004D40 85%, #00332C 100%);
+        }
+
+        /* Latar Belakang Cover Bertema Gerbang SMA Negeri 1 Madang Suku II */
+        .cover-school-bg {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.72) 0%, rgba(127, 29, 29, 0.78) 50%, rgba(15, 23, 42, 0.88) 100%);
+        }
+
+        /* Gaya Tombol Menu Ribbon seperti di Gambar */
+        .menu-ribbon {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 14px;
+            box-shadow: 0 6px 0 rgba(0, 0, 0, 0.18), 0 10px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid #ffffff;
+        }
+        .menu-ribbon:hover {
+            transform: translateX(10px) scale(1.02);
+            box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2), 0 14px 20px rgba(0, 0, 0, 0.15);
+        }
+        .menu-ribbon:active {
+            transform: translateX(6px) translateY(3px);
+            box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .ribbon-left {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: white;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-shadow: 1px 2px 0px rgba(0,0,0,0.2);
+            flex-grow: 1;
+            position: relative;
+        }
+        .ribbon-left::before {
+            content: '';
+            display: inline-block;
+            width: 3px;
+            height: 24px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 2px;
+            margin-right: 14px;
+        }
+        .ribbon-right {
+            background-color: #ffffff;
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-width: 72px;
+            height: 100%;
+        }
+        .ribbon-right::after {
+            content: '';
+            display: inline-block;
+            width: 3px;
+            height: 24px;
+            background-color: #CBD5E1;
+            border-radius: 2px;
+            margin-left: 10px;
+        }
+
+        /* Animasi Gelembung Lab */
+        @keyframes floatBubble {
+            0% { transform: translateY(0) scale(1); opacity: 0.8; }
+            50% { transform: translateY(-25px) scale(1.1); opacity: 1; }
+            100% { transform: translateY(-50px) scale(0.8); opacity: 0; }
+        }
+        .bubble {
+            animation: floatBubble 3s infinite ease-in;
+        }
+        .bubble-delay-1 { animation-delay: 1s; }
+        .bubble-delay-2 { animation-delay: 2s; }
+
+        /* Animasi Konten Masuk */
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-pop {
+            animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Animasi Langkah Rumus Interaktif */
+        @keyframes slideStep {
+            0% { opacity: 0; transform: translateX(-18px) scale(0.97); }
+            100% { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        .animate-step {
+            animation: slideStep 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4); }
+            50% { box-shadow: 0 0 18px 4px rgba(234, 179, 8, 0.25); }
+        }
+        .formula-glow {
+            animation: pulseGlow 2.5s infinite ease-in-out;
+        }
+        @keyframes bounceArrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(4px); }
+        }
+        .animate-arrow {
+            animation: bounceArrow 1.2s infinite ease-in-out;
+        }
+
+        /* Custom Scrollbar untuk panel materi */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="lab-bg min-h-screen flex flex-col justify-between relative text-slate-800">
+
+    <!-- Dekorasi Awan & DNA di Latar Belakang -->
+    <div id="lab-decorations" class="hidden fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <!-- Awan Putih di Tengah -->
+        <svg class="absolute top-[33%] left-0 w-full h-36 text-white opacity-95" viewBox="0 0 1440 160" preserveAspectRatio="none">
+            <path fill="currentColor" d="M0,96 C60,60 120,110 180,80 C240,50 300,100 360,70 C420,40 480,95 540,65 C600,35 660,90 720,60 C780,30 840,85 900,55 C960,25 1020,80 1080,50 C1140,20 1200,75 1260,45 C1320,15 1380,70 1440,40 L1440,0 L0,0 Z" transform="scale(1, -1) translate(0, -160)"></path>
+        </svg>
+        <!-- Dekorasi Molekul Transparan -->
+        <div class="absolute top-12 left-1/3 opacity-10 text-teal-800 font-display text-4xl font-bold rotate-12">H⁺ + OH⁻ ⇌ H₂O</div>
+        <div class="absolute top-28 right-1/4 opacity-10 text-teal-800 font-display text-3xl font-bold -rotate-12">pH 0 — 14</div>
+    </div>
+
+    <!-- Header Navigasi Atas -->
+    <header class="relative z-20 flex items-center justify-between px-4 sm:px-8 pt-4 pb-2">
+        <div class="flex items-center gap-2">
+            <!-- Tombol Kembali ke Sampul Depan (Muncul saat di Menu Utama) -->
+            <button id="btn-cover" onclick="navigateTo('cover')" class="hidden flex items-center gap-2 bg-white/95 hover:bg-white text-amber-800 font-display font-bold px-4 py-2 rounded-full shadow-md border-2 border-amber-500 transition transform hover:scale-105 cursor-pointer text-xs sm:text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
+                <span>Halaman Sampul</span>
+            </button>
+
+            <!-- Tombol Home / Kembali ke Menu Utama -->
+            <button id="btn-home" onclick="navigateTo('home')" class="hidden flex items-center gap-2 bg-white/95 hover:bg-white text-teal-800 font-display font-bold px-4 py-2 rounded-full shadow-md border-2 border-teal-500 transition transform hover:scale-105 cursor-pointer text-xs sm:text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span>Menu Utama</span>
+            </button>
+        </div>
+        <div id="header-spacer" class="block"></div>
+
+        <!-- Kontrol Suara & Info -->
+        <div class="flex items-center gap-3">
+            <button id="btn-sound" onclick="toggleSound()" title="Suara Efek" class="w-11 h-11 rounded-full bg-purple-800 hover:bg-purple-700 text-white flex items-center justify-center shadow-lg border-2 border-white transition transform hover:scale-110 cursor-pointer">
+                <svg id="icon-sound-on" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clip-rule="evenodd"></path></svg>
+                <svg id="icon-sound-off" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM12.293 7.293a1 1 0 011.414 0L15 8.586l1.293-1.293a1 1 0 111.414 1.414L16.414 10l1.293 1.293a1 1 0 01-1.414 1.414L15 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L13.586 10l-1.293-1.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- KONTEN UTAMA -->
+    <main class="relative z-10 flex-grow flex items-center justify-center px-4 sm:px-8 py-4">
+
+        <!-- ==================== 0. HALAMAN DEPAN (SAMPUL & IDENTITAS PENYUSUN) ==================== -->
+        <section id="view-cover" class="w-full max-w-5xl rounded-3xl shadow-2xl border-4 border-amber-400 overflow-hidden relative animate-pop">
+            <!-- Ilustrasi Latar Belakang Tugu Gerbang SMA Negeri 1 Madang Suku II -->
+            <div id="cover-bg-layer" class="absolute inset-0 z-0 bg-cover bg-center">
+                <svg viewBox="0 0 900 560" preserveAspectRatio="xMidYMid slice" class="w-full h-full">
+                    <defs>
+                        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#38BDF8"/>
+                            <stop offset="55%" stop-color="#BAE6FD"/>
+                            <stop offset="100%" stop-color="#E2E8F0"/>
+                        </linearGradient>
+                        <linearGradient id="roofRed" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#991B1B"/>
+                            <stop offset="100%" stop-color="#7F1D1D"/>
+                        </linearGradient>
+                    </defs>
+                    <!-- Langit & Gedung Belakang -->
+                    <rect width="900" height="560" fill="url(#skyGrad)"/>
+                    <polygon points="0,190 450,80 900,190 900,250 0,250" fill="#1E293B"/>
+                    <rect x="30" y="240" width="840" height="260" fill="#FEF3C7"/>
+                    <!-- Atap Segitiga Ornamen Songket Merah-Emas -->
+                    <polygon points="150,245 450,45 750,245" fill="url(#roofRed)" stroke="#F59E0B" stroke-width="6"/>
+                    <polygon points="185,238 450,65 715,238" fill="none" stroke="#FACC15" stroke-width="3" stroke-dasharray="10 6"/>
+                    <!-- Ornamen Bunga Songket Emas di Segitiga -->
+                    <g fill="#FACC15" opacity="0.85">
+                        <circle cx="450" cy="115" r="10"/><circle cx="420" cy="145" r="9"/><circle cx="480" cy="145" r="9"/>
+                        <circle cx="390" cy="175" r="9"/><circle cx="450" cy="175" r="11"/><circle cx="510" cy="175" r="9"/>
+                        <circle cx="355" cy="205" r="9"/><circle cx="420" cy="205" r="9"/><circle cx="480" cy="205" r="9"/><circle cx="545" cy="205" r="9"/>
+                    </g>
+                    <!-- Lis Ukiran Emas Horizontal -->
+                    <rect x="130" y="242" width="640" height="24" fill="#B45309" stroke="#FACC15" stroke-width="2"/>
+                    <!-- Pilar Kiri & Kanan -->
+                    <rect x="65" y="220" width="65" height="295" rx="4" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="3"/>
+                    <rect x="85" y="245" width="25" height="240" fill="#14532D" stroke="#991B1B" stroke-width="3"/>
+                    <rect x="770" y="220" width="65" height="295" rx="4" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="3"/>
+                    <rect x="790" y="245" width="25" height="240" fill="#14532D" stroke="#991B1B" stroke-width="3"/>
+                    <!-- Papan Prasasti Hitam -->
+                    <rect x="130" y="266" width="640" height="230" fill="#0F172A" stroke="#E2E8F0" stroke-width="5"/>
+                    <text x="450" y="312" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="25" fill="#EF4444" letter-spacing="1">SMA NEGERI 1 MADANG SUKU II</text>
+                    <text x="450" y="346" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="26" fill="#FACC15" letter-spacing="2">SMA IDAMAN</text>
+                    <text x="450" y="370" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="14" fill="#FDE047">TERAKREDITASI "A"</text>
+                    <text x="450" y="400" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-weight="bold" font-size="20" fill="#F87171">Be Confident and Good Character</text>
+                    <text x="450" y="428" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="15" fill="#F8FAFC">SEKOLAH BERKUALITAS DAN BERETIKA</text>
+                    <text x="450" y="450" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="15" fill="#F8FAFC">DI ALAM BERSAHABAT DI SOSIAL BERMANFAAT</text>
+                    <text x="450" y="476" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="13" fill="#CBD5E1">SK IZIN OPERASIONAL 422/100/01/XI/2004</text>
+                    <!-- Tangga Bawah -->
+                    <rect x="40" y="512" width="820" height="20" fill="#CBD5E1"/>
+                    <rect x="20" y="532" width="860" height="28" fill="#94A3B8"/>
+                </svg>
+            </div>
+
+            <!-- Lapisan Gelap Transparan agar Teks Identitas Terbaca Jelas -->
+            <div class="relative z-10 cover-school-bg backdrop-blur-[2px] p-6 sm:p-10 flex flex-col items-center text-center text-white">
+                
+                <!-- Bagian Atas: Logo Perisai SMA Negeri 1 Madang Suku II OKU Timur -->
+                <div class="flex flex-col items-center mb-4">
+                    <div id="school-logo-container" class="w-24 h-28 sm:w-28 sm:h-32 drop-shadow-[0_6px_12px_rgba(0,0,0,0.45)] transition transform hover:scale-105">
+                        <!-- SVG Logo Perisai SMA Negeri 1 Madang Suku II OKU Timur -->
+                        <svg viewBox="0 0 220 250" class="w-full h-full">
+                            <!-- Bentuk Perisai Luar -->
+                            <path d="M25,15 L195,15 C195,38 205,52 215,60 C195,78 190,110 192,155 C194,195 165,218 110,240 C55,218 26,195 28,155 C30,110 25,78 5,60 C15,52 25,38 25,15 Z" fill="#0EA5E9" stroke="#1E293B" stroke-width="5"/>
+                            <path d="M32,22 L188,22 C188,42 197,54 205,60 C188,76 184,106 186,152 C188,188 161,210 110,231 C59,210 32,188 34,152 C36,106 32,76 15,60 C23,54 32,42 32,22 Z" fill="none" stroke="#FFFFFF" stroke-width="2.5"/>
+                            <!-- Teks Atas Sekolah -->
+                            <text x="110" y="45" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="13" fill="#0F172A">SMA NEGERI 1</text>
+                            <text x="110" y="60" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="12.5" fill="#0F172A">MADANG SUKU II</text>
+                            <!-- Bintang Emas -->
+                            <polygon points="110,66 114,76 125,76 116,82 119,92 110,86 101,92 104,82 95,76 106,76" fill="#EAB308" stroke="#854D0E" stroke-width="1"/>
+                            <!-- Perisai Dalam Biru Tua -->
+                            <path d="M55,95 Q110,84 165,95 L162,152 Q160,178 110,195 Q60,178 58,152 Z" fill="#1D4ED8" stroke="#93C5FD" stroke-width="2"/>
+                            <!-- Nyala Api Obor -->
+                            <path d="M110,96 C100,108 102,120 110,124 C118,120 120,108 110,96 Z" fill="#F97316"/>
+                            <path d="M110,104 C105,112 106,120 110,122 C114,120 115,112 110,104 Z" fill="#FACC15"/>
+                            <!-- Tangan Menadah & Buku Terbuka -->
+                            <path d="M95,122 Q92,135 103,140 M125,122 Q128,135 117,140" stroke="#CBD5E1" stroke-width="4" fill="none" stroke-linecap="round"/>
+                            <path d="M88,144 L110,140 L132,144 L128,158 L110,154 L92,158 Z" fill="#FFFFFF" stroke="#1E3A8A" stroke-width="1.5"/>
+                            <!-- Sayap Putih Kiri Kanan -->
+                            <path d="M86,154 Q70,150 68,135 Q76,142 86,144 Z" fill="#FFFFFF"/>
+                            <path d="M134,154 Q150,150 152,135 Q144,142 134,144 Z" fill="#FFFFFF"/>
+                            <!-- Teks SMA IDAMAN -->
+                            <text x="110" y="170" text-anchor="middle" font-family="Inter, sans-serif" font-weight="900" font-size="10" fill="#FACC15">SMA</text>
+                            <text x="110" y="183" text-anchor="middle" font-family="Inter, sans-serif" font-weight="900" font-size="12" fill="#FACC15" letter-spacing="1.5">IDAMAN</text>
+                            <!-- Teks OKU TIMUR -->
+                            <text x="110" y="213" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800" font-size="13.5" fill="#0F172A">OKU TIMUR</text>
+                        </svg>
+                    </div>
+                    <span class="mt-2 bg-amber-500/90 text-slate-950 text-xs font-extrabold px-4 py-1 rounded-full tracking-wider uppercase shadow">
+                        SMA Negeri 1 Madang Suku II • OKU Timur
+                    </span>
+                </div>
+
+                <!-- Bagian Tengah: Judul Media Pembelajaran -->
+                <div class="my-2">
+                    <p class="text-sky-200 font-semibold text-xs sm:text-sm uppercase tracking-[0.2em] mb-1">Media Pembelajaran Interaktif Kimia</p>
+                    <h1 class="font-display text-5xl sm:text-6xl md:text-7xl font-bold text-white tracking-wide drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)]">
+                        ASAM BASA
+                    </h1>
+                    <div class="h-1.5 w-32 bg-gradient-to-r from-rose-500 via-amber-400 to-sky-400 rounded-full mx-auto mt-2"></div>
+                </div>
+
+                <!-- Kartu Identitas Penyusun dengan Foto Profil -->
+                <div class="mt-5 bg-white/15 backdrop-blur-md border-2 border-white/40 rounded-2xl p-4 sm:px-7 sm:py-4 flex flex-col sm:flex-row items-center gap-4 shadow-xl max-w-lg w-full">
+                    <!-- Foto Profil Penyusun (Jas Hitam Latar Biru) -->
+                    <div id="author-photo-box" class="w-20 h-24 sm:w-22 sm:h-26 rounded-xl overflow-hidden border-2 border-amber-300 shadow-md shrink-0 bg-[#1414FF] flex items-end justify-center relative">
+                        <svg viewBox="0 0 120 145" class="w-full h-full">
+                            <!-- Latar Belakang Biru Formal -->
+                            <rect width="120" height="145" fill="#1818FF"/>
+                            <!-- Jas Hitam & Kemeja Putih & Dasi -->
+                            <path d="M12,145 C14,112 35,102 60,102 C85,102 106,112 108,145 Z" fill="#111827"/>
+                            <polygon points="44,102 76,102 60,142" fill="#E0F2FE"/>
+                            <polygon points="56,105 64,105 62,142 58,142" fill="#0F172A"/>
+                            <!-- Leher & Wajah -->
+                            <rect x="49" y="84" width="22" height="22" rx="8" fill="#D99B78"/>
+                            <ellipse cx="60" cy="62" rx="24" ry="29" fill="#E5A987"/>
+                            <!-- Telinga -->
+                            <ellipse cx="35" cy="64" rx="4" ry="8" fill="#D99B78"/>
+                            <ellipse cx="85" cy="64" rx="4" ry="8" fill="#D99B78"/>
+                            <!-- Rambut Pendek Rapi -->
+                            <path d="M36,54 C35,30 46,24 60,24 C74,24 85,30 84,54 C82,40 74,36 60,36 C46,36 38,40 36,54 Z" fill="#0F172A"/>
+                            <!-- Alis, Mata, Hidung, Mulut -->
+                            <path d="M44,53 Q50,51 55,53" stroke="#1E293B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                            <path d="M65,53 Q70,51 76,53" stroke="#1E293B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                            <circle cx="50" cy="58" r="2.3" fill="#0F172A"/>
+                            <circle cx="70" cy="58" r="2.3" fill="#0F172A"/>
+                            <path d="M60,58 L58,70 L62,70" stroke="#B47856" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                            <path d="M53,78 Q60,80 67,78" stroke="#9A5B44" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+
+                    <div class="text-center sm:text-left">
+                        <span class="text-[11px] uppercase tracking-widest text-amber-300 font-bold block">Disusun Oleh:</span>
+                        <h2 class="font-display text-xl sm:text-2xl font-bold text-white leading-tight mt-0.5">
+                            Riko Susanto, S.Pd
+                        </h2>
+                        <p class="text-xs sm:text-sm text-sky-100 mt-1">
+                            Guru Mata Pelajaran Kimia<br>
+                            SMA Negeri 1 Madang Suku II
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Tombol Masuk ke Bagian Kedua (Menu Utama) -->
+                <div class="mt-7 flex flex-col sm:flex-row items-center gap-3">
+                    <button onclick="navigateTo('home')" class="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-400 text-slate-950 font-display text-lg sm:text-xl font-bold px-9 py-3.5 rounded-2xl shadow-[0_6px_0_#B45309,0_12px_20px_rgba(0,0,0,0.35)] active:translate-y-1 transition transform hover:scale-105 cursor-pointer flex items-center gap-2.5">
+                        <span>MULAI BELAJAR</span>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                    </button>
+                </div>
+
+                <!-- Opsi Ganti Foto/Logo/Background dari Galeri Lokal (Opsional) -->
+                <div class="mt-4 flex flex-wrap justify-center gap-2 text-[11px]">
+                    <label class="cursor-pointer bg-black/35 hover:bg-black/55 text-slate-200 px-3 py-1 rounded-full border border-white/20 transition">
+                        📷 Ganti Foto Profil
+                        <input type="file" accept="image/*" class="hidden" onchange="replaceCustomAsset(event, 'photo')">
+                    </label>
+                    <label class="cursor-pointer bg-black/35 hover:bg-black/55 text-slate-200 px-3 py-1 rounded-full border border-white/20 transition">
+                        🛡️ Ganti Logo Sekolah
+                        <input type="file" accept="image/*" class="hidden" onchange="replaceCustomAsset(event, 'logo')">
+                    </label>
+                    <label class="cursor-pointer bg-black/35 hover:bg-black/55 text-slate-200 px-3 py-1 rounded-full border border-white/20 transition">
+                        🏫 Ganti Background
+                        <input type="file" accept="image/*" class="hidden" onchange="replaceCustomAsset(event, 'bg')">
+                    </label>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ==================== 1. HALAMAN MENU UTAMA ==================== -->
+        <section id="view-home" class="hidden w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center animate-pop">
+            
+            <!-- Kolom Kiri: Daftar Menu Ribbon Warna-Warni -->
+            <div class="lg:col-span-5 flex flex-col gap-3.5 max-w-md w-full mx-auto lg:mx-0">
+                <!-- 1. PETUNJUK -->
+                <div onclick="navigateTo('petunjuk')" class="menu-ribbon">
+                    <div class="ribbon-left bg-[#F2542D] text-lg sm:text-xl">PETUNJUK</div>
+                    <div class="ribbon-right">
+                        <svg class="w-7 h-7 text-[#F2542D]" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                    </div>
+                </div>
+
+                <!-- 2. TUJUAN PEMBELAJARAN -->
+                <div onclick="navigateTo('tujuan')" class="menu-ribbon">
+                    <div class="ribbon-left bg-[#F59E0B] text-base sm:text-lg leading-tight">TUJUAN PEMBELAJARAN</div>
+                    <div class="ribbon-right">
+                        <svg class="w-7 h-7 text-[#F59E0B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                    </div>
+                </div>
+
+                <!-- 3. MATERI -->
+                <div onclick="navigateTo('materi')" class="menu-ribbon">
+                    <div class="ribbon-left bg-[#EAB308] text-lg sm:text-xl">MATERI</div>
+                    <div class="ribbon-right">
+                        <svg class="w-7 h-7 text-[#EAB308]" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+                    </div>
+                </div>
+
+                <!-- 4. LAB VIRTUAL (UJI LAKMUS & PH) -->
+                <div onclick="navigateTo('lab')" class="menu-ribbon">
+                    <div class="ribbon-left bg-[#84CC16] text-lg sm:text-xl">LAB VIRTUAL</div>
+                    <div class="ribbon-right">
+                        <svg class="w-7 h-7 text-[#65A30D]" fill="currentColor" viewBox="0 0 24 24"><path d="M6 22h12c1.1 0 1.75-1.23 1.12-2.14L14 12.5V5h1c.55 0 1-.45 1-1s-.45-1-1-1H9c-.55 0-1 .45-1 1s.45 1 1 1h1v7.5l-5.12 7.36C4.25 20.77 4.9 22 6 22z"/></svg>
+                    </div>
+                </div>
+
+                <!-- 5. LATIHAN -->
+                <div onclick="navigateTo('latihan')" class="menu-ribbon">
+                    <div class="ribbon-left bg-[#10B981] text-lg sm:text-xl">LATIHAN</div>
+                    <div class="ribbon-right">
+                        <svg class="w-7 h-7 text-[#10B981]" fill="currentColor" viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
+                    </div>
+                </div>
+
+                <!-- 6. GAME -->
+                <div onclick="navigateTo('game')" class="menu-ribbon">
+                    <div class="ribbon-left bg-[#0EA5E9] text-lg sm:text-xl">GAME</div>
+                    <div class="ribbon-right">
+                        <svg class="w-7 h-7 text-[#0EA5E9]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.5s4.5 2.04 4.5 10.5c0 2.49-1.04 5.57-1.6 7H9.1c-.56-1.43-1.6-4.51-1.6-7C7.5 4.54 12 2.5 12 2.5zm0 5.5c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6.5 8.5c-.83 0-1.5.67-1.5 1.5v2.5l3-1.5v-1c0-.83-.67-1.5-1.5-1.5zm13 0c-.83 0-1.5.67-1.5 1.5v1l3 1.5V18c0-.83-.67-1.5-1.5-1.5z"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kolom Kanan: Judul Utama & Ilustrasi Laboratorium Sains -->
+            <div class="lg:col-span-7 flex flex-col items-center text-center relative">
+                <!-- Judul Besar -->
+                <div class="mb-4 sm:mb-6">
+                    <span class="inline-block bg-teal-700/15 text-teal-900 font-bold text-xs sm:text-sm px-4 py-1 rounded-full mb-2 tracking-wider uppercase">
+                        Media Pembelajaran Interaktif Kimia
+                    </span>
+                    <h1 class="font-display text-4xl sm:text-6xl font-bold text-[#005B52] tracking-wide drop-shadow-[0_3px_0_rgba(255,255,255,0.9)]">
+                        ASAM DAN BASA
+                    </h1>
+                    <p class="font-display text-lg sm:text-2xl font-semibold text-[#00796B] mt-1">
+                        Konsep, Indikator, Skala pH &amp; Aplikasinya
+                    </p>
+                </div>
+
+                <!-- Ilustrasi SVG Lab Kimia & Ilmuwan -->
+                <div class="w-full max-w-lg mx-auto relative">
+                    <svg viewBox="0 0 500 320" class="w-full h-auto drop-shadow-xl">
+                        <!-- Rak & Buku di Meja Kiri -->
+                        <rect x="40" y="265" width="90" height="14" rx="4" fill="#F59E0B"/>
+                        <rect x="45" y="251" width="80" height="14" rx="4" fill="#EF4444"/>
+                        <rect x="55" y="237" width="65" height="14" rx="4" fill="#3B82F6"/>
+
+                        <!-- Tabung Reaksi Hijau & Merah -->
+                        <g transform="translate(145, 195) rotate(-12)">
+                            <rect x="0" y="0" width="22" height="80" rx="11" fill="rgba(255,255,255,0.7)" stroke="#CBD5E1" stroke-width="2"/>
+                            <path d="M2 35 L20 35 L20 69 A9 9 0 0 1 2 69 Z" fill="#22C55E"/>
+                        </g>
+                        <g transform="translate(185, 192) rotate(10)">
+                            <rect x="0" y="0" width="22" height="80" rx="11" fill="rgba(255,255,255,0.7)" stroke="#CBD5E1" stroke-width="2"/>
+                            <path d="M2 30 L20 30 L20 69 A9 9 0 0 1 2 69 Z" fill="#EF4444"/>
+                        </g>
+
+                        <!-- Tungku Pembakar & Labu Didih Biru -->
+                        <path d="M245 278 L265 215 M315 278 L295 215" stroke="#475569" stroke-width="5" stroke-linecap="round"/>
+                        <line x1="248" y1="225" x2="312" y2="225" stroke="#334155" stroke-width="5" stroke-linecap="round"/>
+                        <!-- Api Bunsen -->
+                        <path d="M280 245 C270 258 273 272 280 275 C287 272 290 258 280 245 Z" fill="#F97316"/>
+                        <path d="M280 253 C275 262 276 270 280 272 C284 270 285 262 280 253 Z" fill="#FACC15"/>
+                        <!-- Labu Bulat Cairan Biru -->
+                        <rect x="271" y="135" width="18" height="30" fill="rgba(255,255,255,0.75)" stroke="#94A3B8" stroke-width="2"/>
+                        <circle cx="280" cy="190" r="34" fill="rgba(255,255,255,0.75)" stroke="#94A3B8" stroke-width="2"/>
+                        <path d="M247 192 A33 33 0 0 0 313 192 Z" fill="#0EA5E9"/>
+                        <!-- Gelembung Animasi -->
+                        <circle cx="272" cy="182" r="4" fill="#BAE6FD" class="bubble"/>
+                        <circle cx="286" cy="176" r="5" fill="#E0F2FE" class="bubble bubble-delay-1"/>
+                        <circle cx="279" cy="168" r="3" fill="#FFFFFF" class="bubble bubble-delay-2"/>
+
+                        <!-- Karakter Ilmuwan Kimia di Kanan -->
+                        <g transform="translate(335, 95)">
+                            <!-- Jas Lab Putih -->
+                            <path d="M35 95 C25 100 18 135 15 185 L105 185 C102 135 95 100 85 95 Z" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+                            <!-- Baju Dalam Biru -->
+                            <polygon points="48,95 72,95 60,130" fill="#0284C7"/>
+                            <!-- Kepala & Rambut -->
+                            <circle cx="60" cy="58" r="24" fill="#FDBA74"/>
+                            <path d="M36 55 C34 30 55 22 75 30 C90 36 92 58 84 72 C82 55 75 45 60 44 C48 44 40 50 36 55 Z" fill="#1E293B"/>
+                            <circle cx="88" cy="36" r="10" fill="#1E293B"/>
+                            <!-- Kacamata -->
+                            <circle cx="51" cy="58" r="7" fill="none" stroke="#334155" stroke-width="2"/>
+                            <circle cx="68" cy="58" r="7" fill="none" stroke="#334155" stroke-width="2"/>
+                            <line x1="58" y1="58" x2="61" y2="58" stroke="#334155" stroke-width="2"/>
+                            <!-- Senyum -->
+                            <path d="M55 70 Q60 75 65 70" fill="none" stroke="#9A3412" stroke-width="2" stroke-linecap="round"/>
+                            <!-- Tangan Kiri Memegang Erlenmeyer Ungu -->
+                            <path d="M25 115 L-5 92" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round"/>
+                            <g transform="translate(-26, 52)">
+                                <polygon points="18,0 26,0 38,38 6,38" fill="rgba(255,255,255,0.8)" stroke="#94A3B8" stroke-width="2"/>
+                                <polygon points="10,24 34,24 38,38 6,38" fill="#A855F7"/>
+                            </g>
+                            <!-- Papan Catatan -->
+                            <rect x="42" y="118" width="36" height="46" rx="4" fill="#6366F1" transform="rotate(-8 60 140)"/>
+                            <rect x="52" y="114" width="16" height="6" rx="2" fill="#CBD5E1" transform="rotate(-8 60 140)"/>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 2. HALAMAN PETUNJUK ==================== -->
+        <section id="view-petunjuk" class="hidden w-full max-w-4xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-[#F2542D] p-6 sm:p-8 animate-pop">
+            <div class="flex items-center gap-3 border-b-2 border-orange-100 pb-4 mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-[#F2542D] text-white flex items-center justify-center shadow">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                </div>
+                <div>
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-[#F2542D]">PETUNJUK PENGGUNAAN</h2>
+                    <p class="text-sm text-slate-500">Panduan navigasi media pembelajaran interaktif Asam &amp; Basa</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-orange-50 p-4 rounded-2xl border border-orange-200 flex gap-3">
+                    <span class="w-8 h-8 rounded-full bg-[#F2542D] text-white font-bold flex items-center justify-center shrink-0">1</span>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Navigasi Menu Utama</h3>
+                        <p class="text-sm text-slate-600 mt-1">Klik tombol warna-warni di halaman utama untuk membuka bagian Tujuan, Materi, Lab Virtual, Latihan, atau Game.</p>
+                    </div>
+                </div>
+                <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200 flex gap-3">
+                    <span class="w-8 h-8 rounded-full bg-[#F59E0B] text-white font-bold flex items-center justify-center shrink-0">2</span>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Eksplorasi Materi</h3>
+                        <p class="text-sm text-slate-600 mt-1">Gunakan tab topik di dalam menu Materi untuk mempelajari konsep, 3 teori asam-basa, skala indikator pH, serta contoh soal interaktif.</p>
+                    </div>
+                </div>
+                <div class="bg-lime-50 p-4 rounded-2xl border border-lime-200 flex gap-3">
+                    <span class="w-8 h-8 rounded-full bg-[#65A30D] text-white font-bold flex items-center justify-center shrink-0">3</span>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Lab Virtual (Uji Lakmus &amp; pH)</h3>
+                        <p class="text-sm text-slate-600 mt-1">Lakukan simulasi mencelupkan kertas lakmus merah, lakmus biru, dan indikator universal ke berbagai larutan sehari-hari.</p>
+                    </div>
+                </div>
+                <div class="bg-sky-50 p-4 rounded-2xl border border-sky-200 flex gap-3">
+                    <span class="w-8 h-8 rounded-full bg-[#0284C7] text-white font-bold flex items-center justify-center shrink-0">4</span>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Latihan &amp; Game Edukasi</h3>
+                        <p class="text-sm text-slate-600 mt-1">Uji pemahamanmu melalui kuis interaktif dan permainan menyortir zat Asam, Basa, dan Netral!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button onclick="navigateTo('tujuan')" class="bg-[#F2542D] hover:bg-[#d9431e] text-white font-display font-bold px-6 py-2.5 rounded-xl shadow-md transition transform hover:scale-105 cursor-pointer">
+                    Lanjut ke Tujuan Pembelajaran &rarr;
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== 3. HALAMAN TUJUAN PEMBELAJARAN ==================== -->
+        <section id="view-tujuan" class="hidden w-full max-w-4xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-[#F59E0B] p-6 sm:p-8 animate-pop">
+            <div class="flex items-center gap-3 border-b-2 border-amber-100 pb-4 mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-[#F59E0B] text-white flex items-center justify-center shadow">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                </div>
+                <div>
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-[#D97706]">TUJUAN PEMBELAJARAN</h2>
+                    <p class="text-sm text-slate-500">Capaian yang diharapkan setelah mempelajari modul ini</p>
+                </div>
+            </div>
+
+            <div class="space-y-3.5">
+                <div class="flex items-start gap-3.5 bg-amber-50/80 p-4 rounded-2xl border border-amber-200">
+                    <div class="w-7 h-7 rounded-lg bg-[#F59E0B] text-white font-bold flex items-center justify-center shrink-0 mt-0.5">✓</div>
+                    <p class="text-slate-700 font-medium">Menjelaskan konsep asam dan basa menurut teori <strong>Arrhenius</strong>, <strong>Brønsted-Lowry</strong>, dan <strong>Lewis</strong> dengan tepat.</p>
+                </div>
+                <div class="flex items-start gap-3.5 bg-amber-50/80 p-4 rounded-2xl border border-amber-200">
+                    <div class="w-7 h-7 rounded-lg bg-[#F59E0B] text-white font-bold flex items-center justify-center shrink-0 mt-0.5">✓</div>
+                    <p class="text-slate-700 font-medium">Mengidentifikasi sifat-sifat larutan asam, basa, dan netral dalam kehidupan sehari-hari.</p>
+                </div>
+                <div class="flex items-start gap-3.5 bg-amber-50/80 p-4 rounded-2xl border border-amber-200">
+                    <div class="w-7 h-7 rounded-lg bg-[#F59E0B] text-white font-bold flex items-center justify-center shrink-0 mt-0.5">✓</div>
+                    <p class="text-slate-700 font-medium">Menentukan sifat asam atau basa suatu larutan menggunakan <strong>indikator kertas lakmus</strong>, indikator alami, dan <strong>skala pH (0–14)</strong>.</p>
+                </div>
+                <div class="flex items-start gap-3.5 bg-amber-50/80 p-4 rounded-2xl border border-amber-200">
+                    <div class="w-7 h-7 rounded-lg bg-[#F59E0B] text-white font-bold flex items-center justify-center shrink-0 mt-0.5">✓</div>
+                    <p class="text-slate-700 font-medium">Membedakan karakteristik asam kuat, asam lemah, basa kuat, dan basa lemah berdasarkan derajat ionisasi dan nilai pH.</p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-between">
+                <button onclick="navigateTo('petunjuk')" class="text-slate-600 hover:text-slate-900 font-semibold px-4 py-2 cursor-pointer">&larr; Petunjuk</button>
+                <button onclick="navigateTo('materi')" class="bg-[#F59E0B] hover:bg-[#d97706] text-white font-display font-bold px-6 py-2.5 rounded-xl shadow-md transition transform hover:scale-105 cursor-pointer">
+                    Mulai Belajar Materi &rarr;
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== 4. HALAMAN MATERI INTERAKTIF ==================== -->
+        <section id="view-materi" class="hidden w-full max-w-5xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-[#EAB308] p-6 sm:p-8 animate-pop">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-yellow-100 pb-4 mb-5">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-[#EAB308] text-white flex items-center justify-center shadow">
+                        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-2xl sm:text-3xl font-bold text-[#CA8A04]">MATERI ASAM &amp; BASA</h2>
+                        <p class="text-sm text-slate-500">Pilih tab topik di bawah untuk mempelajari konsep secara mendalam</p>
+                    </div>
+                </div>
+
+                <!-- Tab Navigasi Materi -->
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="switchMateriTab(0)" id="tab-materi-0" class="materi-tab px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-[#EAB308] text-white shadow cursor-pointer transition">1. Konsep &amp; Sifat</button>
+                    <button onclick="switchMateriTab(1)" id="tab-materi-1" class="materi-tab px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-yellow-100 text-yellow-800 hover:bg-yellow-200 cursor-pointer transition">2. Teori Asam-Basa</button>
+                    <button onclick="switchMateriTab(2)" id="tab-materi-2" class="materi-tab px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-yellow-100 text-yellow-800 hover:bg-yellow-200 cursor-pointer transition">3. Indikator &amp; pH</button>
+                    <button onclick="switchMateriTab(3)" id="tab-materi-3" class="materi-tab px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-yellow-100 text-yellow-800 hover:bg-yellow-200 cursor-pointer transition">4. Contoh Soal &amp; Animasi Rumus</button>
+                </div>
+            </div>
+
+            <!-- Konten Tab 0: Konsep & Sifat -->
+            <div id="content-materi-0" class="materi-content space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Kartu Asam -->
+                    <div class="bg-rose-50 border-2 border-rose-200 rounded-2xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-display text-2xl font-bold text-rose-700">LARUTAN ASAM</h3>
+                                <span class="bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full">pH &lt; 7</span>
+                            </div>
+
+                            <!-- Ilustrasi Visual Asam -->
+                            <div class="bg-white/80 rounded-xl p-3 mb-3 border border-rose-200 flex items-center justify-center">
+                                <svg viewBox="0 0 280 95" class="w-full h-24">
+                                    <!-- Lemon -->
+                                    <g transform="translate(15, 10)">
+                                        <ellipse cx="30" cy="35" rx="26" ry="20" fill="#FACC15" stroke="#EAB308" stroke-width="2"/>
+                                        <circle cx="8" cy="35" r="4" fill="#EAB308"/>
+                                        <circle cx="52" cy="35" r="4" fill="#EAB308"/>
+                                        <path d="M16 30 Q30 22 44 30" stroke="#FEF08A" stroke-width="2" fill="none"/>
+                                        <text x="30" y="72" text-anchor="middle" font-size="10" font-weight="bold" fill="#9F1239">Jeruk (Asam Sitrat)</text>
+                                    </g>
+                                    <!-- Botol Cuka -->
+                                    <g transform="translate(105, 5)">
+                                        <rect x="20" y="18" width="24" height="44" rx="4" fill="#FDA4AF" stroke="#E11D48" stroke-width="2"/>
+                                        <rect x="26" y="8" width="12" height="10" rx="2" fill="#BE123C"/>
+                                        <rect x="23" y="30" width="18" height="18" fill="#FFF" rx="2"/>
+                                        <text x="32" y="42" text-anchor="middle" font-size="8" font-weight="bold" fill="#BE123C">CUKA</text>
+                                        <text x="32" y="77" text-anchor="middle" font-size="10" font-weight="bold" fill="#9F1239">CH₃COOH</text>
+                                    </g>
+                                    <!-- Ion H+ -->
+                                    <g transform="translate(190, 12)">
+                                        <circle cx="35" cy="32" r="24" fill="#FFE4E6" stroke="#F43F5E" stroke-width="2" stroke-dasharray="4 2"/>
+                                        <circle cx="35" cy="32" r="15" fill="#E11D48"/>
+                                        <text x="35" y="37" text-anchor="middle" font-size="13" font-weight="bold" fill="#FFF">H⁺</text>
+                                        <text x="35" y="70" text-anchor="middle" font-size="10" font-weight="bold" fill="#9F1239">Melepas Ion H⁺</text>
+                                    </g>
+                                </svg>
+                            </div>
+
+                            <p class="text-sm text-slate-700 mb-3">Istilah asam berasal dari bahasa Latin <em>acidus</em> yang berarti <strong>masam</strong>.</p>
+                            <ul class="space-y-1.5 text-sm text-slate-700">
+                                <li class="flex items-center gap-2"><span class="text-rose-600 font-bold">•</span> Rasanya masam (jangan dicicipi di lab!).</li>
+                                <li class="flex items-center gap-2"><span class="text-rose-600 font-bold">•</span> Bersifat <strong>korosif</strong> (dapat merusak logam &amp; jaringan).</li>
+                                <li class="flex items-center gap-2"><span class="text-rose-600 font-bold">•</span> Mengubah kertas lakmus biru menjadi <strong>merah</strong>.</li>
+                                <li class="flex items-center gap-2"><span class="text-rose-600 font-bold">•</span> Menghasilkan ion hidrogen (<strong>H⁺</strong>) dalam air.</li>
+                                <li class="flex items-center gap-2"><span class="text-rose-600 font-bold">•</span> <strong>Contoh:</strong> Air jeruk, cuka (CH₃COOH), asam lambung (HCl), air aki (H₂SO₄).</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Kartu Basa -->
+                    <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-display text-2xl font-bold text-sky-700">LARUTAN BASA</h3>
+                                <span class="bg-sky-600 text-white text-xs font-bold px-3 py-1 rounded-full">pH &gt; 7</span>
+                            </div>
+
+                            <!-- Ilustrasi Visual Basa -->
+                            <div class="bg-white/80 rounded-xl p-3 mb-3 border border-sky-200 flex items-center justify-center">
+                                <svg viewBox="0 0 280 95" class="w-full h-24">
+                                    <!-- Sabun & Gelembung -->
+                                    <g transform="translate(15, 10)">
+                                        <rect x="8" y="24" width="44" height="24" rx="8" fill="#38BDF8" stroke="#0284C7" stroke-width="2"/>
+                                        <circle cx="16" cy="14" r="5" fill="#BAE6FD" stroke="#0284C7" stroke-width="1.5"/>
+                                        <circle cx="30" cy="10" r="7" fill="#E0F2FE" stroke="#0284C7" stroke-width="1.5"/>
+                                        <circle cx="45" cy="15" r="4" fill="#BAE6FD" stroke="#0284C7" stroke-width="1.5"/>
+                                        <text x="30" y="72" text-anchor="middle" font-size="10" font-weight="bold" fill="#075985">Sabun (Licin)</text>
+                                    </g>
+                                    <!-- Obat Maag -->
+                                    <g transform="translate(105, 8)">
+                                        <rect x="14" y="22" width="36" height="22" rx="11" fill="#E0F2FE" stroke="#0284C7" stroke-width="2"/>
+                                        <path d="M32 22 L32 44" stroke="#0284C7" stroke-width="2"/>
+                                        <rect x="14" y="22" width="18" height="22" rx="9" fill="#0EA5E9"/>
+                                        <text x="32" y="74" text-anchor="middle" font-size="10" font-weight="bold" fill="#075985">Obat Maag</text>
+                                    </g>
+                                    <!-- Ion OH- -->
+                                    <g transform="translate(190, 12)">
+                                        <circle cx="35" cy="32" r="24" fill="#E0F2FE" stroke="#0284C7" stroke-width="2" stroke-dasharray="4 2"/>
+                                        <circle cx="35" cy="32" r="15" fill="#0284C7"/>
+                                        <text x="35" y="37" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFF">OH⁻</text>
+                                        <text x="35" y="70" text-anchor="middle" font-size="10" font-weight="bold" fill="#075985">Melepas Ion OH⁻</text>
+                                    </g>
+                                </svg>
+                            </div>
+
+                            <p class="text-sm text-slate-700 mb-3">Basa merupakan senyawa kimia yang menyerap ion hidronium ketika dilarutkan dalam air.</p>
+                            <ul class="space-y-1.5 text-sm text-slate-700">
+                                <li class="flex items-center gap-2"><span class="text-sky-600 font-bold">•</span> Rasanya pahit dan terasa <strong>licin</strong> di kulit seperti sabun.</li>
+                                <li class="flex items-center gap-2"><span class="text-sky-600 font-bold">•</span> Bersifat <strong>kaustik</strong> (dapat merusak kulit jika pekat).</li>
+                                <li class="flex items-center gap-2"><span class="text-sky-600 font-bold">•</span> Mengubah kertas lakmus merah menjadi <strong>biru</strong>.</li>
+                                <li class="flex items-center gap-2"><span class="text-sky-600 font-bold">•</span> Menghasilkan ion hidroksida (<strong>OH⁻</strong>) dalam air.</li>
+                                <li class="flex items-center gap-2"><span class="text-sky-600 font-bold">•</span> <strong>Contoh:</strong> Sabun mandi, obat maag Mg(OH)₂, soda api (NaOH), amonia (NH₃).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Konten Tab 1: 3 Teori Asam Basa -->
+            <div id="content-materi-1" class="materi-content hidden space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Arrhenius -->
+                    <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 flex flex-col justify-between">
+                        <div>
+                            <span class="inline-block bg-amber-500 text-white text-xs font-bold px-2.5 py-1 rounded-lg mb-2">1. Svante Arrhenius (1884)</span>
+                            <h3 class="font-display text-lg font-bold text-slate-800 mb-2">Berdasarkan Ion dalam Air</h3>
+
+                            <!-- Diagram Visual Arrhenius -->
+                            <div class="bg-white rounded-xl p-2 mb-3 border border-amber-200">
+                                <svg viewBox="0 0 220 80" class="w-full h-20">
+                                    <!-- Gelas Air -->
+                                    <path d="M55 15 L55 68 Q55 74 62 74 L158 74 Q165 74 165 68 L165 15" fill="#E0F2FE" stroke="#0284C7" stroke-width="2"/>
+                                    <text x="110" y="28" text-anchor="middle" font-size="9" font-weight="bold" fill="#0369A1">Pelarut Air (H₂O)</text>
+                                    <!-- Ion H+ dan OH- -->
+                                    <circle cx="85" cy="50" r="14" fill="#EF4444"/>
+                                    <text x="85" y="54" text-anchor="middle" font-size="11" font-weight="bold" fill="#FFF">H⁺</text>
+                                    <text x="85" y="70" text-anchor="middle" font-size="8" font-weight="bold" fill="#B91C1C">Asam</text>
+
+                                    <circle cx="135" cy="50" r="14" fill="#2563EB"/>
+                                    <text x="135" y="54" text-anchor="middle" font-size="10" font-weight="bold" fill="#FFF">OH⁻</text>
+                                    <text x="135" y="70" text-anchor="middle" font-size="8" font-weight="bold" fill="#1D4ED8">Basa</text>
+                                </svg>
+                            </div>
+
+                            <p class="text-sm text-slate-600 mb-2"><strong>Asam:</strong> Zat yang melepaskan ion <strong>H⁺</strong> jika dilarutkan dalam air.</p>
+                            <p class="text-sm text-slate-600"><strong>Basa:</strong> Zat yang melepaskan ion <strong>OH⁻</strong> jika dilarutkan dalam air.</p>
+                        </div>
+                        <div class="mt-3 bg-white p-2.5 rounded-xl border border-amber-200 text-xs font-mono text-slate-700">
+                            HCl(aq) &rarr; H⁺(aq) + Cl⁻(aq)<br>
+                            NaOH(aq) &rarr; Na⁺(aq) + OH⁻(aq)
+                        </div>
+                    </div>
+
+                    <!-- Bronsted-Lowry -->
+                    <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-4 flex flex-col justify-between">
+                        <div>
+                            <span class="inline-block bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg mb-2">2. Brønsted-Lowry (1923)</span>
+                            <h3 class="font-display text-lg font-bold text-slate-800 mb-2">Transfer Proton (H⁺)</h3>
+
+                            <!-- Diagram Visual Transfer Proton -->
+                            <div class="bg-white rounded-xl p-2 mb-3 border border-emerald-200">
+                                <svg viewBox="0 0 220 80" class="w-full h-20">
+                                    <!-- Molekul Asam -->
+                                    <circle cx="52" cy="48" r="18" fill="#F43F5E"/>
+                                    <text x="52" y="52" text-anchor="middle" font-size="10" font-weight="bold" fill="#FFF">ASAM</text>
+                                    <!-- Molekul Basa -->
+                                    <circle cx="168" cy="48" r="18" fill="#0EA5E9"/>
+                                    <text x="168" y="52" text-anchor="middle" font-size="10" font-weight="bold" fill="#FFF">BASA</text>
+                                    <!-- Panah Melengkung Transfer H+ -->
+                                    <path d="M68 32 Q110 8 152 32" fill="none" stroke="#10B981" stroke-width="2.5" stroke-dasharray="3 2"/>
+                                    <polygon points="154,34 146,34 151,27" fill="#10B981"/>
+                                    <circle cx="110" cy="18" r="10" fill="#FACC15" stroke="#CA8A04" stroke-width="1.5"/>
+                                    <text x="110" y="22" text-anchor="middle" font-size="9" font-weight="bold" fill="#1E293B">H⁺</text>
+                                    <text x="110" y="73" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#047857">Donor &rarr; Akseptor Proton</text>
+                                </svg>
+                            </div>
+
+                            <p class="text-sm text-slate-600 mb-2"><strong>Asam:</strong> <strong>Donor</strong> proton (pemberi ion H⁺).</p>
+                            <p class="text-sm text-slate-600"><strong>Basa:</strong> <strong>Akseptor</strong> proton (penerima ion H⁺).</p>
+                        </div>
+                        <div class="mt-3 bg-white p-2.5 rounded-xl border border-emerald-200 text-xs font-mono text-slate-700">
+                            NH₃ + H₂O &rightleftharpoons; NH₄⁺ + OH⁻<br>
+                            <span class="text-emerald-700">(Basa) (Asam)</span>
+                        </div>
+                    </div>
+
+                    <!-- Lewis -->
+                    <div class="bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-4 flex flex-col justify-between">
+                        <div>
+                            <span class="inline-block bg-indigo-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg mb-2">3. Gilbert N. Lewis (1923)</span>
+                            <h3 class="font-display text-lg font-bold text-slate-800 mb-2">Pasangan Elektron Bebas</h3>
+
+                            <!-- Diagram Visual Pasangan Elektron Bebas -->
+                            <div class="bg-white rounded-xl p-2 mb-3 border border-indigo-200">
+                                <svg viewBox="0 0 220 80" class="w-full h-20">
+                                    <!-- Basa Lewis (Donor PEB) -->
+                                    <circle cx="55" cy="42" r="18" fill="#6366F1"/>
+                                    <text x="55" y="46" text-anchor="middle" font-size="10" font-weight="bold" fill="#FFF">:NH₃</text>
+                                    <!-- Titik Elektron -->
+                                    <circle cx="82" cy="38" r="3" fill="#F59E0B"/>
+                                    <circle cx="82" cy="46" r="3" fill="#F59E0B"/>
+                                    <!-- Panah -->
+                                    <line x1="90" y1="42" x2="132" y2="42" stroke="#4F46E5" stroke-width="2.5"/>
+                                    <polygon points="136,42 128,38 128,46" fill="#4F46E5"/>
+                                    <!-- Asam Lewis (Akseptor PEB) -->
+                                    <circle cx="162" cy="42" r="18" fill="#EC4899"/>
+                                    <text x="162" y="46" text-anchor="middle" font-size="10" font-weight="bold" fill="#FFF">BF₃</text>
+                                    <text x="110" y="73" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#3730A3">Transfer Pasangan Elektron</text>
+                                </svg>
+                            </div>
+
+                            <p class="text-sm text-slate-600 mb-2"><strong>Asam:</strong> <strong>Akseptor</strong> pasangan elektron bebas (PEB).</p>
+                            <p class="text-sm text-slate-600"><strong>Basa:</strong> <strong>Donor</strong> pasangan elektron bebas (PEB).</p>
+                        </div>
+                        <div class="mt-3 bg-white p-2.5 rounded-xl border border-indigo-200 text-xs font-mono text-slate-700">
+                            BF₃ + :NH₃ &rarr; F₃B:NH₃<br>
+                            <span class="text-indigo-700">(Asam Lewis) (Basa Lewis)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Konten Tab 2: Indikator & Skala pH -->
+            <div id="content-materi-2" class="materi-content hidden space-y-5">
+                <!-- Skala pH Interaktif -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <h3 class="font-display text-lg font-bold text-slate-800 mb-2">Skala Derajat Keasaman (pH 0 – 14)</h3>
+                    <div class="grid grid-cols-15 gap-1 text-center text-white font-bold text-xs sm:text-sm rounded-xl overflow-hidden shadow-inner" style="grid-template-columns: repeat(15, minmax(0, 1fr));">
+                        <div class="bg-[#EE1C25] py-3">0</div>
+                        <div class="bg-[#F26522] py-3">1</div>
+                        <div class="bg-[#F7941D] py-3">2</div>
+                        <div class="bg-[#FFF200] text-slate-800 py-3">3</div>
+                        <div class="bg-[#8DC63F] py-3">4</div>
+                        <div class="bg-[#39B54A] py-3">5</div>
+                        <div class="bg-[#00A651] py-3">6</div>
+                        <div class="bg-[#00A99D] py-3 ring-2 ring-slate-900 z-10">7</div>
+                        <div class="bg-[#00AEEF] py-3">8</div>
+                        <div class="bg-[#0072BC] py-3">9</div>
+                        <div class="bg-[#2E3192] py-3">10</div>
+                        <div class="bg-[#662D91] py-3">11</div>
+                        <div class="bg-[#92278F] py-3">12</div>
+                        <div class="bg-[#601B63] py-3">13</div>
+                        <div class="bg-[#420D47] py-3">14</div>
+                    </div>
+                    <div class="flex justify-between text-xs font-bold mt-2 px-1">
+                        <span class="text-rose-600">&larr; ASAM KUAT (0–3)</span>
+                        <span class="text-amber-600">ASAM LEMAH (4–6)</span>
+                        <span class="text-teal-700">NETRAL (7)</span>
+                        <span class="text-sky-600">BASA LEMAH (8–10)</span>
+                        <span class="text-purple-800">BASA KUAT (11–14) &rarr;</span>
+                    </div>
+                </div>
+
+                <!-- Rumus Perhitungan pH Singkat -->
+                <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4">
+                    <h4 class="font-display font-bold text-amber-900 text-base mb-2">🧮 Rumus Perhitungan pH &amp; pOH</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-xs font-mono">
+                        <div class="bg-white p-2.5 rounded-xl border border-amber-200">
+                            <span class="text-rose-600 font-bold block mb-1">Asam Kuat:</span>
+                            [H⁺] = M × valensi (a)<br>
+                            pH = -log [H⁺]
+                        </div>
+                        <div class="bg-white p-2.5 rounded-xl border border-amber-200">
+                            <span class="text-orange-600 font-bold block mb-1">Asam Lemah:</span>
+                            [H⁺] = √(Ka × M)<br>
+                            pH = -log [H⁺]
+                        </div>
+                        <div class="bg-white p-2.5 rounded-xl border border-amber-200">
+                            <span class="text-sky-600 font-bold block mb-1">Basa Kuat:</span>
+                            [OH⁻] = M × valensi (b)<br>
+                            pOH = -log [OH⁻]
+                        </div>
+                        <div class="bg-white p-2.5 rounded-xl border border-amber-200">
+                            <span class="text-purple-700 font-bold block mb-1">Hubungan pH &amp; pOH:</span>
+                            pH + pOH = 14<br>
+                            pH = 14 - pOH
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabel Indikator -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left border-collapse rounded-xl overflow-hidden">
+                        <thead>
+                            <tr class="bg-yellow-500 text-white font-display">
+                                <th class="p-3">Jenis Indikator</th>
+                                <th class="p-3">Warna di Asam</th>
+                                <th class="p-3">Warna di Netral</th>
+                                <th class="p-3">Warna di Basa</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 bg-white">
+                            <tr>
+                                <td class="p-3 font-semibold">Lakmus Merah</td>
+                                <td class="p-3 text-rose-600 font-bold">Tetap Merah</td>
+                                <td class="p-3 text-rose-600">Tetap Merah</td>
+                                <td class="p-3 text-blue-600 font-bold">Berubah Biru</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold">Lakmus Biru</td>
+                                <td class="p-3 text-rose-600 font-bold">Berubah Merah</td>
+                                <td class="p-3 text-blue-600">Tetap Biru</td>
+                                <td class="p-3 text-blue-600 font-bold">Tetap Biru</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold">Fenolftalein (PP)</td>
+                                <td class="p-3 text-slate-500">Tidak Berwarna</td>
+                                <td class="p-3 text-slate-500">Tidak Berwarna</td>
+                                <td class="p-3 text-pink-600 font-bold">Merah Muda (Pink)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold">Ekstrak Kunyit (Alami)</td>
+                                <td class="p-3 text-yellow-500 font-bold">Kuning Cerah</td>
+                                <td class="p-3 text-amber-500">Kuning Tua</td>
+                                <td class="p-3 text-red-800 font-bold">Merah Kecokelatan</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Konten Tab 3: Contoh Soal & Animasi Rumus Interaktif -->
+            <div id="content-materi-3" class="materi-content hidden space-y-5">
+                <!-- Pemilih Kategori Contoh Soal -->
+                <div class="flex flex-wrap items-center justify-between gap-3 bg-yellow-50 p-3.5 rounded-2xl border-2 border-yellow-200">
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="selectExampleCase(0)" id="btn-ex-0" class="ex-btn px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-rose-600 text-white shadow cursor-pointer transition">
+                            1. Asam Kuat (HCl)
+                        </button>
+                        <button onclick="selectExampleCase(1)" id="btn-ex-1" class="ex-btn px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-white text-orange-700 border border-orange-200 hover:bg-orange-50 cursor-pointer transition">
+                            2. Asam Lemah (CH₃COOH)
+                        </button>
+                        <button onclick="selectExampleCase(2)" id="btn-ex-2" class="ex-btn px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-white text-sky-700 border border-sky-200 hover:bg-sky-50 cursor-pointer transition">
+                            3. Basa Kuat (Ba(OH)₂)
+                        </button>
+                        <button onclick="selectExampleCase(3)" id="btn-ex-3" class="ex-btn px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-white text-purple-700 border border-purple-200 hover:bg-purple-50 cursor-pointer transition">
+                            4. Basa Lemah (NH₄OH)
+                        </button>
+                    </div>
+                    <button onclick="playAllFormulaSteps()" id="btn-play-anim" class="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white font-display font-bold text-xs sm:text-sm px-4 py-2 rounded-xl shadow cursor-pointer transition transform hover:scale-105">
+                        <span>▶ Putar Animasi Langkah</span>
+                    </button>
+                </div>
+
+                <!-- Area Utama Contoh Soal & Papan Animasi Rumus -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+                    <!-- Kolom Kiri: Soal & Diketahui -->
+                    <div class="lg:col-span-5 bg-slate-50 border-2 border-slate-200 rounded-2xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span id="ex-badge" class="bg-rose-100 text-rose-700 text-xs font-extrabold px-3 py-1 rounded-full uppercase">Contoh Soal 1 • Asam Kuat</span>
+                                <span class="text-xs font-bold text-slate-400">Mudah Dipahami</span>
+                            </div>
+                            <h3 class="font-display text-lg font-bold text-slate-800 mb-2">Pertanyaan:</h3>
+                            <p id="ex-question" class="text-sm sm:text-base text-slate-700 bg-white p-3.5 rounded-xl border border-slate-200 leading-relaxed font-medium">
+                                Hitunglah nilai pH dari larutan asam klorida (HCl) dengan konsentrasi 0,01 M!
+                            </p>
+
+                            <div class="mt-4">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">📌 Informasi yang Diketahui:</h4>
+                                <div id="ex-known" class="space-y-1.5 text-xs sm:text-sm text-slate-700 bg-amber-50/80 p-3.5 rounded-xl border border-amber-200">
+                                    <!-- Diisi via JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kartu Rumus Utama yang Berdenyut -->
+                        <div class="mt-4 bg-gradient-to-r from-slate-800 to-slate-900 text-white p-4 rounded-xl formula-glow border-2 border-amber-400">
+                            <div class="text-[11px] uppercase tracking-widest text-amber-300 font-bold mb-1">✨ Rumus Kunci yang Dipakai:</div>
+                            <div id="ex-formula-box" class="font-mono text-sm sm:text-base font-bold text-amber-200">
+                                [H⁺] = M × a &nbsp;|&nbsp; pH = -log [H⁺]
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kolom Kanan: Papan Pengerjaan Bertahap dengan Animasi -->
+                    <div class="lg:col-span-7 bg-white border-2 border-yellow-300 rounded-2xl p-5 flex flex-col justify-between shadow-inner">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-display text-lg font-bold text-slate-800 flex items-center gap-2">
+                                    <span>🎬 Pengerjaan Langkah demi Langkah</span>
+                                </h3>
+                                <span id="ex-step-counter" class="text-xs font-bold bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
+                                    Langkah 1 / 3
+                                </span>
+                            </div>
+
+                            <!-- Wadah Langkah Animasi -->
+                            <div id="ex-steps-container" class="space-y-3 min-h-[235px]">
+                                <!-- Diisi via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Tombol Kontrol Langkah Manual -->
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                            <button onclick="prevFormulaStep()" id="btn-step-prev" class="px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer transition disabled:opacity-40">
+                                &larr; Sebelumnya
+                            </button>
+                            <div class="flex gap-1.5" id="ex-step-dots">
+                                <!-- Indikator titik langkah -->
+                            </div>
+                            <button onclick="nextFormulaStep()" id="btn-step-next" class="px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-[#EAB308] hover:bg-[#CA8A04] text-white shadow cursor-pointer transition">
+                                Langkah Berikutnya &rarr;
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-between items-center border-t border-slate-100 pt-4">
+                <button onclick="navigateTo('tujuan')" class="text-slate-600 hover:text-slate-900 font-semibold px-4 py-2 cursor-pointer">&larr; Tujuan</button>
+                <button onclick="navigateTo('lab')" class="bg-[#84CC16] hover:bg-[#65A30D] text-white font-display font-bold px-6 py-2.5 rounded-xl shadow-md transition transform hover:scale-105 cursor-pointer">
+                    Coba Lab Virtual Uji pH &rarr;
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== 5. HALAMAN LAB VIRTUAL (UJI LAKMUS & PH) ==================== -->
+        <section id="view-lab" class="hidden w-full max-w-5xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-[#84CC16] p-6 sm:p-8 animate-pop">
+            <div class="flex items-center gap-3 border-b-2 border-lime-100 pb-4 mb-5">
+                <div class="w-12 h-12 rounded-2xl bg-[#84CC16] text-white flex items-center justify-center shadow">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M6 22h12c1.1 0 1.75-1.23 1.12-2.14L14 12.5V5h1c.55 0 1-.45 1-1s-.45-1-1-1H9c-.55 0-1 .45-1 1s.45 1 1 1h1v7.5l-5.12 7.36C4.25 20.77 4.9 22 6 22z"/></svg>
+                </div>
+                <div>
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-[#4D7C0F]">LAB VIRTUAL: UJI INDIKATOR &amp; pH</h2>
+                    <p class="text-sm text-slate-500">Pilih larutan di bawah, lalu celupkan kertas indikator untuk mengamati perubahan warnanya!</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <!-- Panel Pilih Larutan (Kiri) -->
+                <div class="lg:col-span-5 space-y-2.5">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">1. Pilih Sampel Larutan:</label>
+                    <div id="lab-solutions-list" class="grid grid-cols-2 gap-2.5">
+                        <!-- Diisi via JS -->
+                    </div>
+                </div>
+
+                <!-- Area Simulasi Gelas Kimia (Tengah) -->
+                <div class="lg:col-span-4 flex flex-col items-center justify-center bg-slate-100/80 rounded-2xl p-5 border-2 border-slate-200 relative min-h-[290px]">
+                    <div id="lab-solution-title" class="font-display font-bold text-lg text-slate-800 mb-2">Air Jeruk Nipis</div>
+                    
+                    <!-- Visual Gelas Kimia & Kertas Lakmus -->
+                    <div class="relative w-44 h-48 flex items-end justify-center">
+                        <!-- Strip Indikator yang dicelupkan -->
+                        <div id="indicator-strip" class="w-8 h-36 rounded-t-md shadow-md transition-all duration-500 transform -translate-y-12 border border-slate-300 flex flex-col justify-between overflow-hidden z-10">
+                            <div id="strip-top" class="h-1/2 w-full bg-slate-200 flex items-center justify-center text-[9px] font-bold text-slate-600">KERTAS</div>
+                            <div id="strip-bottom" class="h-1/2 w-full bg-slate-200 transition-colors duration-500"></div>
+                        </div>
+
+                        <!-- Gelas Kimia (Beaker) -->
+                        <div class="absolute bottom-0 w-36 h-32 border-x-4 border-b-4 border-slate-400/80 rounded-b-2xl bg-white/40 backdrop-blur-[1px] overflow-hidden flex items-end z-20 pointer-events-none">
+                            <!-- Cairan Larutan -->
+                            <div id="beaker-liquid" class="w-full h-24 bg-yellow-300/70 transition-colors duration-500 relative">
+                                <div class="w-full h-2 bg-white/40"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Celup Indikator -->
+                    <div class="mt-4 w-full">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 text-center mb-2">2. Celupkan Indikator:</label>
+                        <div class="flex justify-center gap-2">
+                            <button onclick="dipIndicator('lakmus-merah')" class="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-lg shadow cursor-pointer transition">Lakmus Merah</button>
+                            <button onclick="dipIndicator('lakmus-biru')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg shadow cursor-pointer transition">Lakmus Biru</button>
+                            <button onclick="dipIndicator('universal')" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg shadow cursor-pointer transition">pH Universal</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hasil Pengamatan (Kanan) -->
+                <div class="lg:col-span-3 bg-lime-50 border-2 border-lime-200 rounded-2xl p-4 h-full flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-display font-bold text-lime-800 text-lg mb-2">Hasil Pengamatan</h3>
+                        <div id="lab-result-box" class="text-sm text-slate-700 space-y-2">
+                            <p class="italic text-slate-500">Silakan pilih larutan dan klik salah satu tombol indikator untuk mencelupkannya.</p>
+                        </div>
+                    </div>
+                    <div id="lab-ph-badge" class="hidden mt-4 p-3 rounded-xl bg-white border border-lime-300 text-center">
+                        <div class="text-xs text-slate-500 font-semibold">Nilai pH Larutan</div>
+                        <div id="lab-ph-value" class="font-display text-3xl font-bold text-lime-700">2.5</div>
+                        <div id="lab-ph-category" class="text-xs font-bold uppercase mt-1 px-2 py-0.5 rounded-full inline-block bg-rose-100 text-rose-700">Asam Kuat</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-between items-center border-t border-slate-100 pt-4">
+                <button onclick="navigateTo('materi')" class="text-slate-600 hover:text-slate-900 font-semibold px-4 py-2 cursor-pointer">&larr; Materi</button>
+                <button onclick="navigateTo('latihan')" class="bg-[#10B981] hover:bg-[#059669] text-white font-display font-bold px-6 py-2.5 rounded-xl shadow-md transition transform hover:scale-105 cursor-pointer">
+                    Uji Kemampuan di Latihan &rarr;
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== 6. HALAMAN LATIHAN (KUIS INTERAKTIF) ==================== -->
+        <section id="view-latihan" class="hidden w-full max-w-3xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-[#10B981] p-6 sm:p-8 animate-pop">
+            <div class="flex items-center justify-between border-b-2 border-emerald-100 pb-4 mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-[#10B981] text-white flex items-center justify-center shadow">
+                        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-2xl sm:text-3xl font-bold text-[#059669]">LATIHAN SOAL</h2>
+                        <p class="text-sm text-slate-500">Jawablah pertanyaan konsep &amp; hitungan pH berikut dengan tepat!</p>
+                    </div>
+                </div>
+                <div id="quiz-progress" class="bg-emerald-100 text-emerald-800 font-display font-bold px-4 py-1.5 rounded-full text-sm">
+                    Soal 1 / 8
+                </div>
+            </div>
+
+            <!-- Kontainer Soal Kuis -->
+            <div id="quiz-container">
+                <h3 id="quiz-question" class="text-lg sm:text-xl font-bold text-slate-800 mb-5 leading-relaxed">
+                    Memuat pertanyaan...
+                </h3>
+                <div id="quiz-options" class="space-y-3">
+                    <!-- Pilihan jawaban diisi JS -->
+                </div>
+
+                <!-- Umpan Balik Jawaban -->
+                <div id="quiz-feedback" class="hidden mt-5 p-4 rounded-2xl text-sm font-medium"></div>
+
+                <div class="mt-6 flex justify-end">
+                    <button id="btn-next-question" onclick="nextQuestion()" class="hidden bg-[#10B981] hover:bg-[#059669] text-white font-display font-bold px-6 py-2.5 rounded-xl shadow-md cursor-pointer transition">
+                        Soal Berikutnya &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kontainer Hasil Akhir Kuis -->
+            <div id="quiz-result" class="hidden text-center py-6 space-y-4">
+                <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-4xl font-display font-bold shadow-inner">
+                    🏆
+                </div>
+                <h3 class="font-display text-3xl font-bold text-slate-800">Latihan Selesai!</h3>
+                <p class="text-slate-600">Skor akhir yang berhasil kamu peroleh adalah:</p>
+                <div id="quiz-final-score" class="font-display text-5xl font-bold text-[#10B981]">100</div>
+                <p id="quiz-final-message" class="text-sm font-medium text-slate-600 max-w-md mx-auto"></p>
+                <div class="pt-4 flex justify-center gap-3">
+                    <button onclick="restartQuiz()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-display font-bold px-5 py-2.5 rounded-xl cursor-pointer transition">
+                        Ulangi Latihan
+                    </button>
+                    <button onclick="navigateTo('game')" class="bg-[#0EA5E9] hover:bg-[#0284C7] text-white font-display font-bold px-6 py-2.5 rounded-xl shadow-md cursor-pointer transition">
+                        Mainkan Game &rarr;
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 7. HALAMAN GAME EDUKASI ==================== -->
+        <section id="view-game" class="hidden w-full max-w-4xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-[#0EA5E9] p-6 sm:p-8 animate-pop">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b-2 border-sky-100 pb-4 mb-5">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-[#0EA5E9] text-white flex items-center justify-center shadow">
+                        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.5s4.5 2.04 4.5 10.5c0 2.49-1.04 5.57-1.6 7H9.1c-.56-1.43-1.6-4.51-1.6-7C7.5 4.54 12 2.5 12 2.5z"/></svg>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-2xl sm:text-3xl font-bold text-[#0284C7]">GAME: SORTIR ZAT &amp; HITUNG pH</h2>
+                        <p class="text-sm text-slate-500">Tentukan apakah zat atau hasil hitungan pH berikut termasuk ASAM, NETRAL, atau BASA!</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="bg-amber-100 text-amber-800 font-display font-bold px-4 py-1.5 rounded-xl">
+                        ⏱️ <span id="game-timer">45</span>s
+                    </div>
+                    <div class="bg-sky-100 text-sky-800 font-display font-bold px-4 py-1.5 rounded-xl">
+                        ⭐ Skor: <span id="game-score">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Layar Mulai Game -->
+            <div id="game-start-screen" class="text-center py-8 space-y-4">
+                <div class="text-5xl">🧪🧮🧼</div>
+                <h3 class="font-display text-2xl font-bold text-slate-800">Siap Menguji Ketangkasan Kimia &amp; Hitungan pH?</h3>
+                <p class="text-slate-600 max-w-md mx-auto text-sm">Kamu memiliki waktu <strong>60 detik</strong> untuk mengelompokkan zat sehari-hari maupun soal hitungan konsentrasi/pH cepat. Jawaban benar +10 poin, salah -5 poin!</p>
+                <button onclick="startGame()" class="bg-[#0EA5E9] hover:bg-[#0284C7] text-white font-display text-lg font-bold px-8 py-3 rounded-2xl shadow-lg transform hover:scale-105 transition cursor-pointer">
+                    MULAI PERMAINAN!
+                </button>
+            </div>
+
+            <!-- Area Bermain -->
+            <div id="game-play-screen" class="hidden space-y-6">
+                <!-- Kartu Zat yang Muncul -->
+                <div class="flex flex-col items-center justify-center py-4">
+                    <div id="game-card" class="bg-gradient-to-br from-slate-50 to-slate-100 border-4 border-sky-300 rounded-3xl p-6 w-64 text-center shadow-lg transform transition duration-200">
+                        <div id="game-item-emoji" class="text-5xl mb-2">🍋</div>
+                        <div id="game-item-name" class="font-display text-2xl font-bold text-slate-800">Air Lemon</div>
+                        <div id="game-item-hint" class="text-xs text-slate-500 mt-1">Mengandung asam sitrat</div>
+                    </div>
+                    <div id="game-feedback-toast" class="h-6 mt-2 font-display font-bold text-sm"></div>
+                </div>
+
+                <!-- 3 Tombol Wadah Target -->
+                <div class="grid grid-cols-3 gap-3 sm:gap-5">
+                    <button onclick="checkGameAnswer('asam')" class="bg-rose-500 hover:bg-rose-600 active:scale-95 text-white rounded-2xl p-4 sm:p-5 shadow-lg border-b-4 border-rose-700 transition cursor-pointer flex flex-col items-center">
+                        <span class="text-2xl sm:text-3xl mb-1">🔴</span>
+                        <span class="font-display text-lg sm:text-xl font-bold">ASAM</span>
+                        <span class="text-[11px] opacity-90">pH &lt; 7</span>
+                    </button>
+
+                    <button onclick="checkGameAnswer('netral')" class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white rounded-2xl p-4 sm:p-5 shadow-lg border-b-4 border-emerald-700 transition cursor-pointer flex flex-col items-center">
+                        <span class="text-2xl sm:text-3xl mb-1">🟢</span>
+                        <span class="font-display text-lg sm:text-xl font-bold">NETRAL</span>
+                        <span class="text-[11px] opacity-90">pH = 7</span>
+                    </button>
+
+                    <button onclick="checkGameAnswer('basa')" class="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-2xl p-4 sm:p-5 shadow-lg border-b-4 border-blue-800 transition cursor-pointer flex flex-col items-center">
+                        <span class="text-2xl sm:text-3xl mb-1">🔵</span>
+                        <span class="font-display text-lg sm:text-xl font-bold">BASA</span>
+                        <span class="text-[11px] opacity-90">pH &gt; 7</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Layar Game Over -->
+            <div id="game-over-screen" class="hidden text-center py-8 space-y-4">
+                <div class="text-5xl">🎉</div>
+                <h3 class="font-display text-3xl font-bold text-slate-800">Waktu Habis!</h3>
+                <p class="text-slate-600">Total skor akhir yang kamu kumpulkan:</p>
+                <div id="game-final-score" class="font-display text-5xl font-bold text-[#0EA5E9]">0</div>
+                <div class="pt-3 flex justify-center gap-3">
+                    <button onclick="startGame()" class="bg-[#0EA5E9] hover:bg-[#0284C7] text-white font-display font-bold px-6 py-2.5 rounded-xl shadow-md cursor-pointer transition">
+                        Main Lagi ↻
+                    </button>
+                    <button onclick="navigateTo('home')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-display font-bold px-6 py-2.5 rounded-xl cursor-pointer transition">
+                        Kembali ke Menu
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Kecil dengan Indikator Halaman -->
+    <footer class="relative z-20 px-6 py-3 flex items-center justify-between text-white/90 text-xs font-medium">
+        <div class="bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full">
+            <span id="page-indicator">Sampul — Identitas Media</span>
+        </div>
+        <div class="hidden sm:block">
+            SMA Negeri 1 Madang Suku II • Riko Susanto, S.Pd
+        </div>
+    </footer>
+
+    <!-- ==================== SCRIPT LOGIKA APLIKASI ==================== -->
+    <script>
+        // --- 1. SISTEM AUDIO (TONE.JS) ---
+        let soundEnabled = true;
+        let synth = null;
+
+        function initAudio() {
+            if (!synth && typeof Tone !== 'undefined') {
+                synth = new Tone.Synth().toDestination();
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                if (Tone.context.state !== 'running') {
+                    Tone.start();
+                }
+                if (type === 'click') {
+                    synth.triggerAttackRelease("C5", "16n");
+                } else if (type === 'correct') {
+                    synth.triggerAttackRelease("E5", "16n");
+                    setTimeout(() => synth.triggerAttackRelease("G5", "8n"), 80);
+                } else if (type === 'wrong') {
+                    synth.triggerAttackRelease("A3", "8n");
+                } else if (type === 'dip') {
+                    synth.triggerAttackRelease("G4", "16n");
+                }
+            } catch (e) {
+                // Abaikan jika browser memblokir autoplay audio
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('icon-sound-on').classList.toggle('hidden', !soundEnabled);
+            document.getElementById('icon-sound-off').classList.toggle('hidden', soundEnabled);
+            if (soundEnabled) playSound('click');
+        }
+
+        // --- 2. NAVIGASI ANTAR HALAMAN ---
+        const pages = {
+            'cover': { id: 'view-cover', label: 'Sampul — Identitas Media' },
+            'home': { id: 'view-home', label: '1 / 7 — Menu Utama' },
+            'petunjuk': { id: 'view-petunjuk', label: '2 / 7 — Petunjuk' },
+            'tujuan': { id: 'view-tujuan', label: '3 / 7 — Tujuan Pembelajaran' },
+            'materi': { id: 'view-materi', label: '4 / 7 — Materi Asam & Basa' },
+            'lab': { id: 'view-lab', label: '5 / 7 — Lab Virtual pH' },
+            'latihan': { id: 'view-latihan', label: '6 / 7 — Latihan Soal' },
+            'game': { id: 'view-game', label: '7 / 7 — Game Edukasi' }
+        };
+
+        // Fungsi unggah gambar asli dari perangkat pengguna jika diinginkan
+        function replaceCustomAsset(event, targetType) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataUrl = e.target.result;
+                if (targetType === 'photo') {
+                    document.getElementById('author-photo-box').innerHTML = `<img src="${dataUrl}" alt="Foto Penyusun" class="w-full h-full object-cover">`;
+                } else if (targetType === 'logo') {
+                    document.getElementById('school-logo-container').innerHTML = `<img src="${dataUrl}" alt="Logo Sekolah" class="w-full h-full object-contain">`;
+                } else if (targetType === 'bg') {
+                    const bgLayer = document.getElementById('cover-bg-layer');
+                    bgLayer.innerHTML = '';
+                    bgLayer.style.backgroundImage = `url('${dataUrl}')`;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function navigateTo(pageKey) {
+            playSound('click');
+            // Hentikan timer game jika meninggalkan halaman game
+            if (pageKey !== 'game' && gameInterval) {
+                clearInterval(gameInterval);
+            }
+
+            // Sembunyikan semua section
+            Object.values(pages).forEach(p => {
+                document.getElementById(p.id).classList.add('hidden');
+            });
+
+            // Tampilkan section tujuan
+            const target = pages[pageKey];
+            const el = document.getElementById(target.id);
+            el.classList.remove('hidden');
+            el.classList.remove('animate-pop');
+            void el.offsetWidth; // trigger reflow animasi
+            el.classList.add('animate-pop');
+
+            // Atur dekorasi latar belakang & tombol navigasi header
+            const btnCover = document.getElementById('btn-cover');
+            const btnHome = document.getElementById('btn-home');
+            const spacer = document.getElementById('header-spacer');
+            const labDecor = document.getElementById('lab-decorations');
+
+            if (pageKey === 'cover') {
+                btnCover.classList.add('hidden');
+                btnHome.classList.add('hidden');
+                spacer.classList.remove('hidden');
+                labDecor.classList.add('hidden');
+            } else if (pageKey === 'home') {
+                btnCover.classList.remove('hidden');
+                btnHome.classList.add('hidden');
+                spacer.classList.add('hidden');
+                labDecor.classList.remove('hidden');
+            } else {
+                btnCover.classList.add('hidden');
+                btnHome.classList.remove('hidden');
+                spacer.classList.add('hidden');
+                labDecor.classList.remove('hidden');
+            }
+
+            // Update indikator halaman
+            document.getElementById('page-indicator').textContent = target.label;
+
+            // Inisialisasi konten khusus halaman
+            if (pageKey === 'lab') initLab();
+            if (pageKey === 'latihan' && currentQuestionIndex === 0 && !quizFinished) loadQuestion();
+        }
+
+        // --- 3. TAB MATERI & CONTOH SOAL ANIMASI ---
+        function switchMateriTab(index) {
+            playSound('click');
+            if (exampleAnimTimer) clearInterval(exampleAnimTimer);
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById(`tab-materi-${i}`);
+                const content = document.getElementById(`content-materi-${i}`);
+                if (i === index) {
+                    btn.className = "materi-tab px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-[#EAB308] text-white shadow cursor-pointer transition";
+                    content.classList.remove('hidden');
+                } else {
+                    btn.className = "materi-tab px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-yellow-100 text-yellow-800 hover:bg-yellow-200 cursor-pointer transition";
+                    content.classList.add('hidden');
+                }
+            }
+            if (index === 3) {
+                selectExampleCase(currentExampleIdx, false);
+            }
+        }
+
+        // Data Contoh Soal Interaktif dengan Langkah Animasi Rumus
+        const exampleCases = [
+            {
+                badge: "Contoh Soal 1 • Asam Kuat",
+                badgeClass: "bg-rose-100 text-rose-700",
+                btnActiveClass: "bg-rose-600 text-white shadow",
+                btnInactiveClass: "bg-white text-rose-700 border border-rose-200 hover:bg-rose-50",
+                question: "Hitunglah nilai pH dari larutan asam klorida (HCl) dengan konsentrasi 0,01 M!",
+                known: [
+                    "• Jenis zat = <strong>HCl</strong> (Asam Kuat)",
+                    "• Konsentrasi (M) = 0,01 M = <strong>10⁻² M</strong>",
+                    "• Valensi asam (a) = <strong>1</strong> (HCl &rarr; 1 H⁺ + Cl⁻)"
+                ],
+                formula: "[H⁺] = M × a &nbsp;|&nbsp; pH = -log [H⁺]",
+                steps: [
+                    {
+                        title: "Langkah 1: Hitung Konsentrasi Ion [H⁺]",
+                        math: "[H⁺] = M × a = 10⁻² × 1 = 10⁻² M",
+                        note: "Karena HCl terionisasi sempurna, konsentrasi H⁺ langsung dikalikan valensi asamnya (1).",
+                        color: "bg-rose-50 border-rose-200 text-rose-900"
+                    },
+                    {
+                        title: "Langkah 2: Masukkan ke Rumus pH",
+                        math: "pH = -log [H⁺] = -log (10⁻²)",
+                        note: "Ingat sifat logaritma sederhana: -log (10⁻ⁿ) = n.",
+                        color: "bg-amber-50 border-amber-200 text-amber-900"
+                    },
+                    {
+                        title: "Langkah 3: Hasil Akhir",
+                        math: "pH = 2",
+                        note: "Jadi, nilai pH larutan HCl 0,01 M adalah 2 (bersifat asam kuat).",
+                        color: "bg-emerald-50 border-emerald-300 text-emerald-900"
+                    }
+                ]
+            },
+            {
+                badge: "Contoh Soal 2 • Asam Lemah",
+                badgeClass: "bg-orange-100 text-orange-700",
+                btnActiveClass: "bg-orange-600 text-white shadow",
+                btnInactiveClass: "bg-white text-orange-700 border border-orange-200 hover:bg-orange-50",
+                question: "Larutan asam asetat (CH₃COOH) 0,1 M memiliki tetapan ionisasi Ka = 10⁻⁵. Tentukan nilai pH larutan tersebut!",
+                known: [
+                    "• Jenis zat = <strong>CH₃COOH</strong> (Asam Lemah)",
+                    "• Konsentrasi (M) = 0,1 M = <strong>10⁻¹ M</strong>",
+                    "• Tetapan ionisasi (Ka) = <strong>10⁻⁵</strong>"
+                ],
+                formula: "[H⁺] = √(Ka × M) &nbsp;|&nbsp; pH = -log [H⁺]",
+                steps: [
+                    {
+                        title: "Langkah 1: Hitung [H⁺] Menggunakan Rumus Akar",
+                        math: "[H⁺] = √(Ka × M) = √(10⁻⁵ × 10⁻¹)",
+                        note: "Jumlahkan pangkat eksponen di dalam akar: (-5) + (-1) = -6.",
+                        color: "bg-orange-50 border-orange-200 text-orange-900"
+                    },
+                    {
+                        title: "Langkah 2: Sederhanakan Hasil Akar",
+                        math: "[H⁺] = √(10⁻⁶) = 10⁻³ M",
+                        note: "Akar kuadrat dari pangkat eksponen tinggal dibagi 2: (-6) ÷ 2 = -3.",
+                        color: "bg-amber-50 border-amber-200 text-amber-900"
+                    },
+                    {
+                        title: "Langkah 3: Hitung Nilai pH",
+                        math: "pH = -log (10⁻³) = 3",
+                        note: "Jadi, pH larutan asam cuka (CH₃COOH) tersebut adalah 3.",
+                        color: "bg-emerald-50 border-emerald-300 text-emerald-900"
+                    }
+                ]
+            },
+            {
+                badge: "Contoh Soal 3 • Basa Kuat",
+                badgeClass: "bg-sky-100 text-sky-700",
+                btnActiveClass: "bg-sky-600 text-white shadow",
+                btnInactiveClass: "bg-white text-sky-700 border border-sky-200 hover:bg-sky-50",
+                question: "Berapakah nilai pH larutan barium hidroksida Ba(OH)₂ dengan konsentrasi 0,005 M?",
+                known: [
+                    "• Jenis zat = <strong>Ba(OH)₂</strong> (Basa Kuat)",
+                    "• Konsentrasi (M) = 0,005 M = <strong>5 × 10⁻³ M</strong>",
+                    "• Valensi basa (b) = <strong>2</strong> (melepas 2 ion OH⁻)"
+                ],
+                formula: "[OH⁻] = M × b &nbsp;→&nbsp; pOH = -log [OH⁻] &nbsp;→&nbsp; pH = 14 - pOH",
+                steps: [
+                    {
+                        title: "Langkah 1: Hitung Konsentrasi Ion [OH⁻]",
+                        math: "[OH⁻] = M × b = (5 × 10⁻³) × 2 = 10 × 10⁻³ = 10⁻² M",
+                        note: "Jangan lupa kalikan dengan valensi basa (b = 2) karena ada 2 gugus OH⁻!",
+                        color: "bg-sky-50 border-sky-200 text-sky-900"
+                    },
+                    {
+                        title: "Langkah 2: Cari Nilai pOH Terlebih Dahulu",
+                        math: "pOH = -log [OH⁻] = -log (10⁻²) = 2",
+                        note: "Karena yang diketahui ion OH⁻, hasil logaritma menghasilkan nilai pOH (bukan pH).",
+                        color: "bg-amber-50 border-amber-200 text-amber-900"
+                    },
+                    {
+                        title: "Langkah 3: Ubah pOH Menjadi pH",
+                        math: "pH = 14 - pOH = 14 - 2 = 12",
+                        note: "Jadi, nilai pH larutan basa kuat Ba(OH)₂ adalah 12 (pH > 7).",
+                        color: "bg-emerald-50 border-emerald-300 text-emerald-900"
+                    }
+                ]
+            },
+            {
+                badge: "Contoh Soal 4 • Basa Lemah",
+                badgeClass: "bg-purple-100 text-purple-700",
+                btnActiveClass: "bg-purple-600 text-white shadow",
+                btnInactiveClass: "bg-white text-purple-700 border border-purple-200 hover:bg-purple-50",
+                question: "Larutan amonia NH₄OH 0,4 M memiliki tetapan ionisasi basa Kb = 10⁻⁵. Hitunglah nilai pH larutan tersebut! (log 2 = 0,3)",
+                known: [
+                    "• Jenis zat = <strong>NH₄OH</strong> (Basa Lemah)",
+                    "• Konsentrasi (M) = 0,4 M = <strong>4 × 10⁻¹ M</strong>",
+                    "• Tetapan basa (Kb) = <strong>10⁻⁵</strong>"
+                ],
+                formula: "[OH⁻] = √(Kb × M) &nbsp;→&nbsp; pOH = -log [OH⁻] &nbsp;→&nbsp; pH = 14 - pOH",
+                steps: [
+                    {
+                        title: "Langkah 1: Hitung [OH⁻] dengan Rumus Akar",
+                        math: "[OH⁻] = √(10⁻⁵ × 4 × 10⁻¹) = √(4 × 10⁻⁶) = 2 × 10⁻³ M",
+                        note: "Akar dari 4 adalah 2, dan akar dari 10⁻⁶ adalah 10⁻³.",
+                        color: "bg-purple-50 border-purple-200 text-purple-900"
+                    },
+                    {
+                        title: "Langkah 2: Hitung Nilai pOH",
+                        math: "pOH = -log (2 × 10⁻³) = 3 - log 2 = 3 - 0,3 = 2,7",
+                        note: "Gunakan aturan praktis: -log (a × 10⁻ⁿ) = n - log a.",
+                        color: "bg-amber-50 border-amber-200 text-amber-900"
+                    },
+                    {
+                        title: "Langkah 3: Hitung Nilai pH Akhir",
+                        math: "pH = 14 - pOH = 14 - 2,7 = 11,3",
+                        note: "Jadi, pH larutan basa lemah NH₄OH tersebut adalah 11,3.",
+                        color: "bg-emerald-50 border-emerald-300 text-emerald-900"
+                    }
+                ]
+            }
+        ];
+
+        let currentExampleIdx = 0;
+        let currentStepIdx = 0;
+        let exampleAnimTimer = null;
+
+        function selectExampleCase(idx, withSound = true) {
+            if (withSound) playSound('click');
+            if (exampleAnimTimer) clearInterval(exampleAnimTimer);
+            currentExampleIdx = idx;
+            currentStepIdx = 0;
+
+            const data = exampleCases[idx];
+
+            // Update gaya tombol pemilih soal
+            exampleCases.forEach((item, i) => {
+                const btn = document.getElementById(`btn-ex-${i}`);
+                btn.className = `ex-btn px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm cursor-pointer transition ${i === idx ? item.btnActiveClass : item.btnInactiveClass}`;
+            });
+
+            // Isi informasi soal
+            const badgeEl = document.getElementById('ex-badge');
+            badgeEl.textContent = data.badge;
+            badgeEl.className = `${data.badgeClass} text-xs font-extrabold px-3 py-1 rounded-full uppercase`;
+
+            document.getElementById('ex-question').textContent = data.question;
+            document.getElementById('ex-known').innerHTML = data.known.map(k => `<div>${k}</div>`).join('');
+            document.getElementById('ex-formula-box').innerHTML = data.formula;
+
+            renderFormulaSteps();
+        }
+
+        function renderFormulaSteps() {
+            const data = exampleCases[currentExampleIdx];
+            const container = document.getElementById('ex-steps-container');
+            container.innerHTML = '';
+
+            for (let i = 0; i <= currentStepIdx; i++) {
+                const step = data.steps[i];
+                const isLatest = i === currentStepIdx;
+                const stepDiv = document.createElement('div');
+                stepDiv.className = `p-3.5 rounded-xl border-2 ${step.color} ${isLatest ? 'animate-step shadow-sm' : 'opacity-90'}`;
+                stepDiv.innerHTML = `
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-xs font-extrabold uppercase tracking-wide">${step.title}</span>
+                        ${i < data.steps.length - 1 && isLatest ? '<span class="text-xs animate-arrow">⬇️</span>' : ''}
+                    </div>
+                    <div class="font-mono text-sm sm:text-base font-bold bg-white/90 px-3 py-1.5 rounded-lg border border-black/10 my-1">
+                        ${step.math}
+                    </div>
+                    <p class="text-xs opacity-90 mt-1">💡 ${step.note}</p>
+                `;
+                container.appendChild(stepDiv);
+            }
+
+            // Update counter & dots
+            document.getElementById('ex-step-counter').textContent = `Langkah ${currentStepIdx + 1} / ${data.steps.length}`;
+            const dotsContainer = document.getElementById('ex-step-dots');
+            dotsContainer.innerHTML = data.steps.map((_, i) => `
+                <span class="w-2.5 h-2.5 rounded-full transition-all ${i <= currentStepIdx ? 'bg-[#EAB308] scale-110' : 'bg-slate-200'}"></span>
+            `).join('');
+
+            // Status tombol navigasi langkah
+            document.getElementById('btn-step-prev').disabled = currentStepIdx === 0;
+            const nextBtn = document.getElementById('btn-step-next');
+            if (currentStepIdx === data.steps.length - 1) {
+                nextBtn.textContent = "Ulangi Langkah ↻";
+            } else {
+                nextBtn.textContent = "Langkah Berikutnya →";
+            }
+        }
+
+        function nextFormulaStep() {
+            playSound('dip');
+            const totalSteps = exampleCases[currentExampleIdx].steps.length;
+            if (currentStepIdx < totalSteps - 1) {
+                currentStepIdx++;
+            } else {
+                currentStepIdx = 0;
+            }
+            renderFormulaSteps();
+        }
+
+        function prevFormulaStep() {
+            playSound('click');
+            if (currentStepIdx > 0) {
+                currentStepIdx--;
+                renderFormulaSteps();
+            }
+        }
+
+        function playAllFormulaSteps() {
+            playSound('click');
+            if (exampleAnimTimer) clearInterval(exampleAnimTimer);
+            currentStepIdx = 0;
+            renderFormulaSteps();
+
+            const totalSteps = exampleCases[currentExampleIdx].steps.length;
+            exampleAnimTimer = setInterval(() => {
+                if (currentStepIdx < totalSteps - 1) {
+                    playSound('dip');
+                    currentStepIdx++;
+                    renderFormulaSteps();
+                } else {
+                    playSound('correct');
+                    clearInterval(exampleAnimTimer);
+                }
+            }, 1300);
+        }
+
+        // --- 4. SIMULATOR LAB VIRTUAL (UJI LAKMUS & PH) ---
+        const labSolutions = [
+            { id: 'jeruk', name: 'Air Jeruk Nipis', ph: 2.4, type: 'Asam Kuat', liquidColor: 'rgba(253, 224, 71, 0.75)', univColor: '#F7941D', desc: 'Mengandung asam sitrat tinggi. Mengubah lakmus biru menjadi merah.' },
+            { id: 'cuka', name: 'Cuka Dapur (CH₃COOH)', ph: 3.0, type: 'Asam Lemah', liquidColor: 'rgba(241, 245, 249, 0.8)', univColor: '#FFF200', desc: 'Asam asetat encer untuk makanan. Lakmus merah tetap merah, lakmus biru jadi merah.' },
+            { id: 'air', name: 'Air Murni (H₂O)', ph: 7.0, type: 'Netral', liquidColor: 'rgba(186, 230, 253, 0.65)', univColor: '#00A99D', desc: 'Larutan netral dengan konsentrasi ion H⁺ = OH⁻. Tidak mengubah warna kedua kertas lakmus.' },
+            { id: 'sabun', name: 'Air Sabun', ph: 9.5, type: 'Basa Lemah', liquidColor: 'rgba(224, 242, 254, 0.85)', univColor: '#0072BC', desc: 'Terasa licin di tangan. Mengubah kertas lakmus merah menjadi biru.' },
+            { id: 'maag', name: 'Obat Maag Mg(OH)₂', ph: 10.5, type: 'Basa Lemah', liquidColor: 'rgba(255, 255, 255, 0.9)', univColor: '#2E3192', desc: 'Antasida untuk menetralkan kelebihan asam lambung. Lakmus merah berubah menjadi biru.' },
+            { id: 'naoh', name: 'Larutan Soda Api (NaOH)', ph: 13.5, type: 'Basa Kuat', liquidColor: 'rgba(203, 213, 225, 0.75)', univColor: '#420D47', desc: 'Basa kuat yang sangat kaustik. Mengubah indikator universal menjadi ungu gelap.' }
+        ];
+
+        let selectedSolution = labSolutions[0];
+
+        function initLab() {
+            const container = document.getElementById('lab-solutions-list');
+            container.innerHTML = '';
+            labSolutions.forEach(sol => {
+                const btn = document.createElement('button');
+                const isSelected = sol.id === selectedSolution.id;
+                btn.className = `p-3 rounded-xl text-left border-2 transition cursor-pointer ${isSelected ? 'border-lime-600 bg-lime-100 font-bold text-lime-900 shadow-sm' : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium'}`;
+                btn.innerHTML = `<div class="text-xs sm:text-sm">${sol.name}</div>`;
+                btn.onclick = () => selectLabSolution(sol);
+                container.appendChild(btn);
+            });
+            updateBeakerVisual();
+        }
+
+        function selectLabSolution(sol) {
+            playSound('click');
+            selectedSolution = sol;
+            initLab();
+            // Reset posisi kertas lakmus ke atas
+            const strip = document.getElementById('indicator-strip');
+            strip.classList.remove('translate-y-4');
+            strip.classList.add('-translate-y-12');
+            document.getElementById('strip-top').style.backgroundColor = '#E2E8F0';
+            document.getElementById('strip-bottom').style.backgroundColor = '#E2E8F0';
+            document.getElementById('strip-top').textContent = 'KERTAS';
+            document.getElementById('lab-ph-badge').classList.add('hidden');
+            document.getElementById('lab-result-box').innerHTML = `<p class="italic text-slate-500">Larutan <strong>${sol.name}</strong> siap diuji. Silakan celupkan salah satu indikator.</p>`;
+        }
+
+        function updateBeakerVisual() {
+            document.getElementById('lab-solution-title').textContent = selectedSolution.name;
+            document.getElementById('beaker-liquid').style.backgroundColor = selectedSolution.liquidColor;
+        }
+
+        function dipIndicator(type) {
+            playSound('dip');
+            const strip = document.getElementById('indicator-strip');
+            const topPart = document.getElementById('strip-top');
+            const bottomPart = document.getElementById('strip-bottom');
+
+            // Reset posisi dulu agar animasi celup terlihat
+            strip.classList.remove('translate-y-4');
+            strip.classList.add('-translate-y-12');
+
+            setTimeout(() => {
+                // Set warna awal kertas sebelum kena cairan
+                if (type === 'lakmus-merah') {
+                    topPart.style.backgroundColor = '#EF4444';
+                    topPart.style.color = '#FFF';
+                    topPart.textContent = 'MERAH';
+                    // Jika basa (pH > 7) jadi biru, selain itu tetap merah
+                    bottomPart.style.backgroundColor = selectedSolution.ph > 7 ? '#2563EB' : '#EF4444';
+                } else if (type === 'lakmus-biru') {
+                    topPart.style.backgroundColor = '#2563EB';
+                    topPart.style.color = '#FFF';
+                    topPart.textContent = 'BIRU';
+                    // Jika asam (pH < 7) jadi merah, selain itu tetap biru
+                    bottomPart.style.backgroundColor = selectedSolution.ph < 7 ? '#EF4444' : '#2563EB';
+                } else {
+                    topPart.style.backgroundColor = '#FACC15';
+                    topPart.style.color = '#1E293B';
+                    topPart.textContent = 'pH';
+                    bottomPart.style.backgroundColor = selectedSolution.univColor;
+                }
+
+                // Turunkan kertas ke dalam gelas kimia
+                strip.classList.remove('-translate-y-12');
+                strip.classList.add('translate-y-4');
+
+                // Tampilkan hasil pengamatan
+                const badge = document.getElementById('lab-ph-badge');
+                const catEl = document.getElementById('lab-ph-category');
+                badge.classList.remove('hidden');
+                document.getElementById('lab-ph-value').textContent = selectedSolution.ph.toFixed(1);
+                catEl.textContent = selectedSolution.type;
+
+                if (selectedSolution.ph < 7) {
+                    catEl.className = "text-xs font-bold uppercase mt-1 px-2 py-0.5 rounded-full inline-block bg-rose-100 text-rose-700";
+                } else if (selectedSolution.ph === 7) {
+                    catEl.className = "text-xs font-bold uppercase mt-1 px-2 py-0.5 rounded-full inline-block bg-teal-100 text-teal-700";
+                } else {
+                    catEl.className = "text-xs font-bold uppercase mt-1 px-2 py-0.5 rounded-full inline-block bg-sky-100 text-sky-700";
+                }
+
+                let indicatorName = type === 'lakmus-merah' ? 'Kertas Lakmus Merah' : (type === 'lakmus-biru' ? 'Kertas Lakmus Biru' : 'Indikator Universal');
+                document.getElementById('lab-result-box').innerHTML = `
+                    <p><strong>Indikator:</strong> ${indicatorName}</p>
+                    <p class="mt-1">${selectedSolution.desc}</p>
+                `;
+            }, 150);
+        }
+
+        // --- 5. SISTEM KUIS / LATIHAN SOAL (KONSEP + HITUNGAN) ---
+        const quizQuestions = [
+            {
+                q: "Menurut teori Arrhenius, suatu zat dikatakan bersifat asam apabila dilarutkan dalam air akan melepaskan ion...",
+                options: ["Ion Hidroksida (OH⁻)", "Ion Hidrogen (H⁺)", "Ion Klorida (Cl⁻)", "Ion Natrium (Na⁺)"],
+                answer: 1,
+                explanation: "Tepat! Menurut Svante Arrhenius, asam adalah senyawa yang melepaskan ion H⁺ ketika dilarutkan dalam air."
+            },
+            {
+                q: "[Hitungan] Berapakah nilai pH dari larutan asam kuat HCl 0,01 M?",
+                options: ["pH = 1", "pH = 2", "pH = 12", "pH = 13"],
+                answer: 1,
+                explanation: "HCl adalah asam kuat bervalensi 1. [H⁺] = M × a = 0,01 × 1 = 10⁻² M. Maka pH = -log(10⁻²) = 2."
+            },
+            {
+                q: "Sebuah larutan diuji menggunakan kertas lakmus merah dan lakmus biru. Hasilnya, lakmus merah berubah menjadi biru, sedangkan lakmus biru tetap biru. Sifat larutan tersebut adalah...",
+                options: ["Asam Kuat", "Netral", "Basa", "Garam Asam"],
+                answer: 2,
+                explanation: "Benar! Larutan basa akan membirukan kertas lakmus merah (Ingat: B = Basa → Biru)."
+            },
+            {
+                q: "[Hitungan] Hitunglah nilai pH dari larutan basa kuat NaOH 0,001 M! (Diketahui Kw = 10⁻¹⁴)",
+                options: ["pH = 3", "pH = 4", "pH = 10", "pH = 11"],
+                answer: 3,
+                explanation: "NaOH adalah basa kuat bervalensi 1. [OH⁻] = 0,001 = 10⁻³ M → pOH = 3. Maka pH = 14 - pOH = 14 - 3 = 11."
+            },
+            {
+                q: "Menurut teori Brønsted-Lowry, peran suatu BASA dalam reaksi kimia adalah sebagai...",
+                options: ["Donor pasangan elektron bebas", "Pelepas ion OH⁻ dalam air", "Donor proton (pemberi ion H⁺)", "Akseptor proton (penerima ion H⁺)"],
+                answer: 3,
+                explanation: "Hebat! Menurut Brønsted-Lowry, asam adalah donor proton (H⁺) dan basa adalah akseptor proton (H⁺)."
+            },
+            {
+                q: "[Hitungan] Larutan asam lemah CH₃COOH 0,1 M memiliki tetapan ionisasi Ka = 10⁻⁵. Berapakah nilai pH larutan tersebut?",
+                options: ["pH = 1", "pH = 3", "pH = 5", "pH = 6"],
+                answer: 1,
+                explanation: "[H⁺] = √(Ka × M) = √(10⁻⁵ × 10⁻¹) = √(10⁻⁶) = 10⁻³ M. Jadi, pH = -log(10⁻³) = 3."
+            },
+            {
+                q: "[Hitungan] Larutan basa kuat Ba(OH)₂ memiliki konsentrasi 0,005 M. Nilai pH larutan tersebut adalah...",
+                options: ["pH = 2", "pH = 11", "pH = 12", "pH = 13"],
+                answer: 2,
+                explanation: "Ba(OH)₂ memiliki valensi basa b = 2. [OH⁻] = M × b = 0,005 × 2 = 0,01 = 10⁻² M → pOH = 2. Maka pH = 14 - 2 = 12."
+            },
+            {
+                q: "[Hitungan] Sebanyak 50 mL larutan HCl 0,1 M dicampurkan dengan 50 mL larutan NaOH 0,1 M. Berapakah pH campuran yang terbentuk?",
+                options: ["pH = 1", "pH = 7", "pH = 13", "pH = 14"],
+                answer: 1,
+                explanation: "Mol H⁺ = 50 mL × 0,1 M = 5 mmol, dan mol OH⁻ = 50 mL × 0,1 M = 5 mmol. Karena asam kuat dan basa kuat habis bereaksi tepat ekuivalen, larutan bersifat netral (pH = 7)."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let quizScore = 0;
+        let quizAnswered = false;
+        let quizFinished = false;
+
+        function loadQuestion() {
+            quizAnswered = false;
+            const qData = quizQuestions[currentQuestionIndex];
+            document.getElementById('quiz-progress').textContent = `Soal ${currentQuestionIndex + 1} / ${quizQuestions.length}`;
+            document.getElementById('quiz-question').textContent = `${currentQuestionIndex + 1}. ${qData.q}`;
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('btn-next-question').classList.add('hidden');
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            const letters = ['A', 'B', 'C', 'D'];
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-2xl border-2 border-slate-200 hover:border-emerald-400 hover:bg-emerald-50/50 transition flex items-center gap-3 cursor-pointer font-medium text-slate-700";
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-xl bg-slate-100 font-display font-bold text-slate-700 flex items-center justify-center shrink-0">${letters[idx]}</span>
+                    <span>${opt}</span>
+                `;
+                btn.onclick = () => selectAnswer(idx, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(selectedIndex, btnElement) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+
+            const qData = quizQuestions[currentQuestionIndex];
+            const allButtons = document.getElementById('quiz-options').children;
+            const feedbackEl = document.getElementById('quiz-feedback');
+            const pointsPerQuestion = 100 / quizQuestions.length;
+
+            if (selectedIndex === qData.answer) {
+                playSound('correct');
+                quizScore += pointsPerQuestion;
+                btnElement.classList.remove('border-slate-200', 'hover:border-emerald-400');
+                btnElement.classList.add('border-emerald-500', 'bg-emerald-100', 'text-emerald-900', 'font-bold');
+                feedbackEl.className = "mt-5 p-4 rounded-2xl text-sm font-medium bg-emerald-100 text-emerald-800 border border-emerald-300";
+                feedbackEl.innerHTML = `✅ <strong>Benar!</strong> ${qData.explanation}`;
+            } else {
+                playSound('wrong');
+                btnElement.classList.remove('border-slate-200', 'hover:border-emerald-400');
+                btnElement.classList.add('border-rose-500', 'bg-rose-100', 'text-rose-900');
+                // Sorot jawaban yang benar
+                allButtons[qData.answer].classList.add('border-emerald-500', 'bg-emerald-50', 'font-bold');
+                feedbackEl.className = "mt-5 p-4 rounded-2xl text-sm font-medium bg-rose-100 text-rose-800 border border-rose-300";
+                feedbackEl.innerHTML = `❌ <strong>Kurang tepat.</strong> ${qData.explanation}`;
+            }
+
+            feedbackEl.classList.remove('hidden');
+            const nextBtn = document.getElementById('btn-next-question');
+            nextBtn.textContent = currentQuestionIndex === quizQuestions.length - 1 ? "Lihat Hasil Akhir 🏆" : "Soal Berikutnya →";
+            nextBtn.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            playSound('click');
+            if (currentQuestionIndex < quizQuestions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showQuizResult();
+            }
+        }
+
+        function showQuizResult() {
+            quizFinished = true;
+            const finalRoundedScore = Math.round(quizScore);
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+            document.getElementById('quiz-final-score').textContent = finalRoundedScore;
+
+            let msg = "";
+            if (finalRoundedScore === 100) msg = "Luar biasa! Kamu menguasai seluruh konsep dan hitungan pH Asam-Basa dengan sempurna!";
+            else if (finalRoundedScore >= 60) msg = "Bagus sekali! Pemahaman konsep dan hitunganmu sudah baik, terus berlatih agar semakin mahir.";
+            else msg = "Jangan menyerah! Coba pelajari kembali rumus pH di bagian Materi dan lakukan simulasi di Lab Virtual ya.";
+            document.getElementById('quiz-final-message').textContent = msg;
+        }
+
+        function restartQuiz() {
+            playSound('click');
+            currentQuestionIndex = 0;
+            quizScore = 0;
+            quizFinished = false;
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // --- 6. MINI GAME: SORTIR ZAT KIMIA & HITUNGAN CEPAT ---
+        const gameItems = [
+            { name: 'Air Lemon', emoji: '🍋', hint: 'Mengandung asam sitrat', type: 'asam' },
+            { name: 'HCl 0,01 M', emoji: '🧮', hint: 'Hitung: pH = -log(10⁻²) = 2', type: 'asam' },
+            { name: 'Sabun Mandi', emoji: '🧼', hint: 'Terasa licin di kulit', type: 'basa' },
+            { name: 'NaOH 0,001 M', emoji: '🧮', hint: 'Hitung: pOH = 3 → pH = 11', type: 'basa' },
+            { name: 'Air Murni (H₂O)', emoji: '💧', hint: 'Konsentrasi [H⁺] = [OH⁻] = 10⁻⁷ M', type: 'netral' },
+            { name: 'Cuka Makan', emoji: '🍶', hint: 'Asam asetat (CH₃COOH)', type: 'asam' },
+            { name: '[H⁺] = 10⁻⁴ M', emoji: '📐', hint: 'Hitung: pH = 4', type: 'asam' },
+            { name: 'Obat Maag', emoji: '💊', hint: 'Menetralkan asam lambung', type: 'basa' },
+            { name: 'pOH = 2', emoji: '📐', hint: 'Hitung: pH = 14 - 2 = 12', type: 'basa' },
+            { name: '50mL HCl 0,1M + 50mL NaOH 0,1M', emoji: '⚖️', hint: 'Hitung: Mol H⁺ = Mol OH⁻ (Ekuivalen)', type: 'netral' },
+            { name: 'Ba(OH)₂ 0,005 M', emoji: '🧮', hint: 'Hitung: [OH⁻] = 10⁻² M → pH = 12', type: 'basa' },
+            { name: 'Larutan Garam NaCl', emoji: '🧂', hint: 'Hasil reaksi asam kuat + basa kuat', type: 'netral' },
+            { name: 'H₂SO₄ 0,005 M', emoji: '🔋', hint: 'Hitung: [H⁺] = 10⁻² M → pH = 2', type: 'asam' },
+            { name: 'pOH = 7', emoji: '📐', hint: 'Hitung: pH = 14 - 7 = 7', type: 'netral' }
+        ];
+
+        let gameScore = 0;
+        let gameTimeLeft = 60;
+        let gameInterval = null;
+        let currentGameItem = null;
+
+        function startGame() {
+            playSound('click');
+            gameScore = 0;
+            gameTimeLeft = 60;
+            document.getElementById('game-score').textContent = gameScore;
+            document.getElementById('game-timer').textContent = gameTimeLeft;
+            document.getElementById('game-feedback-toast').textContent = '';
+
+            document.getElementById('game-start-screen').classList.add('hidden');
+            document.getElementById('game-over-screen').classList.add('hidden');
+            document.getElementById('game-play-screen').classList.remove('hidden');
+
+            nextGameItem();
+
+            if (gameInterval) clearInterval(gameInterval);
+            gameInterval = setInterval(() => {
+                gameTimeLeft--;
+                document.getElementById('game-timer').textContent = gameTimeLeft;
+                if (gameTimeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function nextGameItem() {
+            const randomIndex = Math.floor(Math.random() * gameItems.length);
+            currentGameItem = gameItems[randomIndex];
+            document.getElementById('game-item-emoji').textContent = currentGameItem.emoji;
+            document.getElementById('game-item-name').textContent = currentGameItem.name;
+            document.getElementById('game-item-hint').textContent = currentGameItem.hint;
+
+            const card = document.getElementById('game-card');
+            card.classList.remove('scale-95');
+            card.classList.add('scale-100');
+        }
+
+        function checkGameAnswer(chosenType) {
+            if (!currentGameItem || gameTimeLeft <= 0) return;
+
+            const toast = document.getElementById('game-feedback-toast');
+            const card = document.getElementById('game-card');
+
+            if (chosenType === currentGameItem.type) {
+                playSound('correct');
+                gameScore += 10;
+                toast.textContent = "✨ Tepat sekali! (+10 Poin)";
+                toast.className = "h-6 mt-2 font-display font-bold text-sm text-emerald-600";
+            } else {
+                playSound('wrong');
+                gameScore = Math.max(0, gameScore - 5);
+                toast.textContent = `❌ Salah! ${currentGameItem.name} bersifat ${currentGameItem.type.toUpperCase()} (-5 Poin)`;
+                toast.className = "h-6 mt-2 font-display font-bold text-sm text-rose-600";
+            }
+
+            document.getElementById('game-score').textContent = gameScore;
+            card.classList.add('scale-95');
+            setTimeout(() => {
+                nextGameItem();
+            }, 150);
+        }
+
+        function endGame() {
+            clearInterval(gameInterval);
+            playSound('correct');
+            document.getElementById('game-play-screen').classList.add('hidden');
+            document.getElementById('game-over-screen').classList.remove('hidden');
+            document.getElementById('game-final-score').textContent = gameScore;
+        }
+    </script>
+</body>
+</html>
